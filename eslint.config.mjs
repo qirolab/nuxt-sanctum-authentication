@@ -21,6 +21,8 @@ export default createConfigForNuxt({
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
     '@stylistic/semi': ['error', 'always'],
+    '@stylistic/brace-style': 'off',
+    '@stylistic/operator-linebreak': ['error', 'after'],
     '@stylistic/member-delimiter-style': [
       'error',
       {
