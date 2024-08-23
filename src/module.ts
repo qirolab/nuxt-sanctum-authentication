@@ -7,9 +7,9 @@ import {
   addRouteMiddleware,
 } from '@nuxt/kit';
 import defu from 'defu';
+import { type DeepPartial } from './types';
 import type { ModuleOptions } from './types/ModuleOptions';
 import { MODULE_CONFIG_KEY, MODULE_NAME, MODULE_VERSION } from './module-info';
-import type { DeepPartial } from './types';
 
 export default defineNuxtModule<DeepPartial<ModuleOptions>>({
   meta: {
@@ -71,6 +71,11 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     addRouteMiddleware({
       name: 'sanctum:auth',
       path: resolver.resolve('./runtime/middleware/sanctum.auth'),
+    });
+
+    addRouteMiddleware({
+      name: 'sanctum:guest',
+      path: resolver.resolve('./runtime/middleware/sanctum.guest'),
     });
   },
 });
