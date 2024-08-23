@@ -1,25 +1,60 @@
+<script lang="ts" setup>
+definePageMeta({
+  middleware: ['sanctum:guest'],
+});
+
+const { refreshUser } = useSanctumAuth();
+
+const form = ref({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+});
+
+const sanctumFetch = useSanctumFetch();
+
+async function submit() {
+  try {
+    await sanctumFetch('/register', {
+      method: 'post',
+      body: form.value,
+    });
+
+    await refreshUser();
+    return navigateTo('/profile');
+  } catch (error) {
+    console.error(error);
+  }
+}
+</script>
+
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/max-attributes-per-line -->
 <template>
-  <form>
+  <form @submit.prevent="submit">
     <div class="register-form">
       <h1 class="heading">Register</h1>
       <div>
         <label for="name">Name</label>
-        <input id="name" type="text" />
+        <input id="name" v-model="form.name" type="text" />
       </div>
       <div>
         <label for="email">Email</label>
-        <input id="email" type="text" />
+        <input id="email" v-model="form.email" type="text" />
       </div>
       <div>
         <label for="password">Password</label>
-        <input id="password" type="password" />
+        <input id="password" v-model="form.password" type="password" />
       </div>
       <div>
         <label for="password_confirmation">Password Confirmation</label>
-        <input id="password_confirmation" type="password_confirmation" />
+        <input
+          id="password_confirmation"
+          v-model="form.password_confirmation"
+          type="password"
+        />
       </div>
       <button type="submit">Register</button>
     </div>
