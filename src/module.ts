@@ -4,6 +4,7 @@ import {
   createResolver,
   useLogger,
   addImportsDir,
+  addRouteMiddleware,
 } from '@nuxt/kit';
 import defu from 'defu';
 import type { ModuleOptions } from './types/ModuleOptions';
@@ -66,5 +67,10 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     addPlugin(resolver.resolve('./runtime/plugins/loadAuthUser'));
 
     addImportsDir(resolver.resolve('./runtime/composables'));
+
+    addRouteMiddleware({
+      name: 'sanctum:auth',
+      path: resolver.resolve('./runtime/middleware/sanctum.auth'),
+    });
   },
 });
