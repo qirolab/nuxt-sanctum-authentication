@@ -1,19 +1,30 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const form = ref({
+  email: '',
+  password: '',
+});
+
+const { login } = useSanctumAuth();
+
+async function submit() {
+  await login(form.value);
+}
+</script>
 
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/max-attributes-per-line -->
 <template>
-  <form>
+  <form @submit.prevent="submit">
     <div class="login-form">
       <h1 class="heading">Login</h1>
       <div>
         <label for="email">Email</label>
-        <input id="email" type="text" />
+        <input id="email" v-model="form.email" type="text" />
       </div>
       <div>
         <label for="password">Password</label>
-        <input id="password" type="password" />
+        <input id="password" v-model="form.password" type="password" />
       </div>
       <button type="submit">Login</button>
     </div>
