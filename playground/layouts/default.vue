@@ -1,4 +1,6 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const { isLoggedIn } = useSanctumAuth<{ name: string }>();
+</script>
 
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
 <template>
@@ -9,18 +11,22 @@
         <li>
           <NuxtLink to="/"> Home </NuxtLink>
         </li>
-        <li>
-          <NuxtLink to="/auth/login"> Login </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink to="/auth/register"> Register </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink to="/dashboard"> Dashboard </NuxtLink>
-        </li>
-        <li>
-          <button>Logout</button>
-        </li>
+        <template v-if="!isLoggedIn">
+          <li>
+            <NuxtLink to="/auth/login"> Login </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink to="/auth/register"> Register </NuxtLink>
+          </li>
+        </template>
+        <template v-if="isLoggedIn">
+          <li>
+            <NuxtLink to="/dashboard"> Dashboard </NuxtLink>
+          </li>
+          <li>
+            <button>Logout</button>
+          </li>
+        </template>
       </ul>
     </nav>
 
