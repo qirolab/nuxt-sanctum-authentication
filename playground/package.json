@@ -8,6 +8,7 @@
     "generate": "nuxi generate"
   },
   "dependencies": {
+    "defu": "^6.1.4",
     "nuxt": "^3.12.4"
   }
 }
