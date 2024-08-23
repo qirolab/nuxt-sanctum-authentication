@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { isLoggedIn } = useSanctumAuth<{ name: string }>();
+const { isLoggedIn, user, logout } = useSanctumAuth<{ name: string }>();
 </script>
 
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
@@ -24,7 +24,13 @@ const { isLoggedIn } = useSanctumAuth<{ name: string }>();
             <NuxtLink to="/dashboard"> Dashboard </NuxtLink>
           </li>
           <li>
-            <button>Logout</button>
+            <NuxtLink to="/profile"> Profile </NuxtLink>
+          </li>
+          <li>
+            <button @click="logout">Logout</button>
+          </li>
+          <li>
+            {{ user?.name }}
           </li>
         </template>
       </ul>
