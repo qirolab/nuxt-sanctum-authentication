@@ -1,9 +1,9 @@
 import { computed } from 'vue';
-import { useSanctumUser } from './useSanctumUser';
 import { getOptions, trimTrailingSlash } from '../helpers';
 import { useSanctumFetch } from './useSanctumFetch';
-import { navigateTo, useNuxtApp, useRoute } from '#app';
+import { useSanctumUser } from './useSanctumUser';
 import { useTokenStorage } from './useTokenStorage';
+import { navigateTo, useNuxtApp, useRoute } from '#app';
 
 export const useSanctumAuth = <T>() => {
   const options = getOptions();
@@ -60,11 +60,41 @@ export const useSanctumAuth = <T>() => {
     );
   }
 
+  async function logout() {
+    if (!isLoggedIn.value) {
+      return;
+    }
+
+    const currentRoute = useRoute();
+    const currentPath = trimTrailingSlash(currentRoute.path);
+
+    await client(options.sanctumEndpoints.logout, { method: 'post' });
+
+    user.value = null;
+
+    if (options.authMode === 'token') {
+      await useTokenStorage().set(undefined);
+    }
+
+    if (
+      !options.redirect.redirectToAfterLogout ||
+      currentPath === options.redirect.redirectToAfterLogout
+    ) {
+      return;
+    }
+
+    await useNuxtApp().runWithContext(
+      async () =>
+        await navigateTo(options.redirect.redirectToAfterLogout as string),
+    );
+  }
+
   return {
     config: getOptions(),
     user,
     isLoggedIn,
     refreshUser,
     login,
+    logout,
   };
 };
