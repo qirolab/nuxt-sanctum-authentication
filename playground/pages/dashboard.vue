@@ -1,3 +1,11 @@
+<script lang="ts" setup>
+definePageMeta({
+  middleware: ['sanctum:auth'],
+});
+
+const { user } = useSanctumAuth();
+</script>
+
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
 <template>
   <div
@@ -9,5 +17,6 @@
     "
   >
     <h1 style="text-align: center">Dashboard</h1>
+    {{ user }}
   </div>
 </template>
