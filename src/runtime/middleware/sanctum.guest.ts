@@ -2,7 +2,7 @@ import { useSanctumAuth } from '../composables/useSanctumAuth';
 import { getOptions } from '../helpers';
 import { defineNuxtRouteMiddleware, navigateTo, createError } from '#app';
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async (_to, _from) => {
   const options = getOptions();
   const { isLoggedIn } = useSanctumAuth();
 
