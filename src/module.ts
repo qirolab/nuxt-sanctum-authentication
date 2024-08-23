@@ -63,6 +63,7 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     logger.start(`Initializing ${MODULE_NAME} module...`);
 
     addPlugin(resolver.resolve('./runtime/plugins/registerSanctumFetch'));
+    addPlugin(resolver.resolve('./runtime/plugins/loadAuthUser'));
 
     addImportsDir(resolver.resolve('./runtime/composables'));
   },
