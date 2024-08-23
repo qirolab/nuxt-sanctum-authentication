@@ -3,6 +3,7 @@ import {
   addPlugin,
   createResolver,
   useLogger,
+  addImportsDir,
 } from '@nuxt/kit';
 import defu from 'defu';
 import type { ModuleOptions } from './types/ModuleOptions';
@@ -62,5 +63,7 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     logger.start(`Initializing ${MODULE_NAME} module...`);
 
     addPlugin(resolver.resolve('./runtime/plugin'));
+
+    addImportsDir(resolver.resolve('./runtime/composables'));
   },
 });
