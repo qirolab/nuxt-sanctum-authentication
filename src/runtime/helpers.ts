@@ -1,7 +1,7 @@
 import { createConsola } from 'consola';
 import type { ModuleOptions } from '../types/ModuleOptions';
-import { useRuntimeConfig } from '#app';
 import { MODULE_CONFIG_KEY, MODULE_NAME } from '../module-info';
+import { useRuntimeConfig } from '#app';
 
 export function getOptions(): ModuleOptions {
   return useRuntimeConfig().public[MODULE_CONFIG_KEY] as ModuleOptions;
