@@ -90,6 +90,8 @@ export default async function onRequestHandler(ctx: FetchContext) {
   // Default headers
   ctx.options.headers = {
     Accept: 'application/json',
+    Referer: origin,
+    Origin: origin,
     ...ctx.options.headers,
   };
 
@@ -119,8 +121,6 @@ export default async function onRequestHandler(ctx: FetchContext) {
     if (token) {
       ctx.options.headers = {
         ...ctx.options.headers,
-        Referer: origin,
-        Origin: origin,
         Authorization: `Bearer ${token}`,
       };
     }
