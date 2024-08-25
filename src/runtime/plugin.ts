@@ -1,13 +1,13 @@
 import { FetchError } from 'ofetch';
 import { createLogger, getOptions } from './helpers';
-import createFetch from './client/createFetch';
+import createFetchService from './client/createFetchService';
 import { defineNuxtPlugin } from '#app';
 import { useSanctumUser } from '#imports';
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
   const { sanctumEndpoints, logLevel } = getOptions();
   const logger = createLogger(logLevel);
-  const fetchService = createFetch(_nuxtApp);
+  const fetchService = createFetchService(_nuxtApp);
 
   const ensureUser = async () => {
     if (!useSanctumUser().value) {

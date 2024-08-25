@@ -30,7 +30,7 @@ function buildFetchOptions(config: ModuleOptions): FetchOptions {
   return options;
 }
 
-export default function createFetch(nuxtApp: NuxtApp) {
+export default function createFetchService(nuxtApp: NuxtApp) {
   const options = getOptions();
   const user = useSanctumUser();
 
