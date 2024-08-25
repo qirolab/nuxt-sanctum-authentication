@@ -1,6 +1,6 @@
 import { FetchError } from 'ofetch';
 import { createLogger, getOptions } from './helpers';
-import createFetchService from './client/createFetchService';
+import createFetchService from './services/createFetchService';
 import { defineNuxtPlugin } from '#app';
 import { useSanctumUser } from '#imports';
 
