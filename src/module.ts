@@ -63,9 +63,7 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
 
     logger.start(`Initializing ${MODULE_NAME} module...`);
 
-    addPlugin(resolver.resolve('./runtime/plugins/registerSanctumFetch'));
-    addPlugin(resolver.resolve('./runtime/plugins/loadAuthUser'));
-
+    addPlugin(resolver.resolve('./runtime/plugin'));
     addImportsDir(resolver.resolve('./runtime/composables'));
 
     addRouteMiddleware({
