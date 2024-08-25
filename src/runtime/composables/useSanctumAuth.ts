@@ -32,7 +32,7 @@ export const useSanctumAuth = <T>() => {
     });
 
     if (options.authMode === 'token') {
-      await useTokenStorage().set(response.token);
+      await useTokenStorage(nuxtApp).set(response.token);
     }
 
     await refreshUser();
@@ -73,7 +73,7 @@ export const useSanctumAuth = <T>() => {
     user.value = null;
 
     if (options.authMode === 'token') {
-      await useTokenStorage().set(undefined);
+      await useTokenStorage(nuxtApp).set(undefined);
     }
 
     if (

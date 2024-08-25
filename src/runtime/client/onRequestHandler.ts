@@ -1,7 +1,12 @@
 import type { FetchContext } from 'ofetch';
 import { createLogger, getOptions } from '../helpers';
 import { useTokenStorage } from '../composables/useTokenStorage';
-import { useCookie, useRequestHeaders, useRequestURL } from '#app';
+import {
+  useCookie,
+  useRequestHeaders,
+  useRequestURL,
+  type NuxtApp,
+} from '#app';
 import type { ModuleOptions } from '~/src/types/ModuleOptions';
 
 // Constants
@@ -84,7 +89,10 @@ async function useCsrfHeader(
  *
  * @param {FetchContext} ctx - The FetchContext object.
  */
-export default async function onRequestHandler(ctx: FetchContext) {
+export default async function onRequestHandler(
+  ctx: FetchContext,
+  nuxtApp: NuxtApp,
+) {
   const method = ctx.options.method?.toLowerCase() ?? 'get';
 
   // Default headers
@@ -116,7 +124,7 @@ export default async function onRequestHandler(ctx: FetchContext) {
 
   // Token Auth Mode
   if (options.authMode === 'token') {
-    const token = await useTokenStorage().get();
+    const token = await useTokenStorage(nuxtApp).get();
 
     if (token) {
       ctx.options.headers = {

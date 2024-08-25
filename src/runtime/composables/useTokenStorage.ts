@@ -1,9 +1,8 @@
 import { getOptions } from '../helpers';
 import { unref } from '#imports';
-import { useCookie, useNuxtApp, useState } from '#app';
+import { useCookie, useState, type NuxtApp } from '#app';
 
-export function useTokenStorage() {
-  const nuxtApp = useNuxtApp();
+export function useTokenStorage(nuxtApp: NuxtApp) {
   const { tokenStorageKey } = getOptions();
   const tokenState = useState<string | undefined | null>(
     tokenStorageKey,

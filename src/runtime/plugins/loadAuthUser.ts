@@ -6,7 +6,7 @@ import { defineNuxtPlugin } from '#app';
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
   const { sanctumEndpoints, logLevel } = getOptions();
-  const $customFetch = createFetch();
+  const $customFetch = createFetch(_nuxtApp);
   const user = useSanctumUser();
   const logger = createLogger(logLevel);
 

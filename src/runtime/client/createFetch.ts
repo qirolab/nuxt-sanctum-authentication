@@ -3,7 +3,7 @@ import type { ModuleOptions } from '../../types/ModuleOptions';
 import { createLogger, getOptions } from '../helpers';
 import { useSanctumUser } from '../composables/useSanctumUser';
 import onRequestHandler from './onRequestHandler';
-import { useNuxtApp } from '#app';
+import { type NuxtApp } from '#app';
 
 function buildFetchOptions(config: ModuleOptions): FetchOptions {
   /**
@@ -30,8 +30,7 @@ function buildFetchOptions(config: ModuleOptions): FetchOptions {
   return options;
 }
 
-export default function createFetch() {
-  const nuxtApp = useNuxtApp();
+export default function createFetch(nuxtApp: NuxtApp) {
   const options = getOptions();
   const user = useSanctumUser();
 
@@ -42,7 +41,7 @@ export default function createFetch() {
 
     async onRequest(context: FetchContext): Promise<void> {
       await nuxtApp.runWithContext(async () => {
-        await onRequestHandler(context);
+        await onRequestHandler(context, nuxtApp);
       });
     },
 
