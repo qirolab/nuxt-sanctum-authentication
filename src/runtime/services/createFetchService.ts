@@ -1,61 +1,202 @@
-import type { FetchOptions, FetchContext } from 'ofetch';
-import type { ModuleOptions } from '../../types/ModuleOptions';
-import { createLogger, getOptions } from '../helpers';
-import { useSanctumUser } from '../composables/useSanctumUser';
-import onRequestHandler from './onRequestHandler';
-import { type NuxtApp } from '#app';
+import type { $Fetch, FetchOptions, FetchContext } from 'ofetch';
+import type { ConsolaInstance } from 'consola';
+import { useSanctumOptions } from '../composables/useSanctumOptions';
+import type { ModuleOptions } from '../types/ModuleOptions';
+import { useTokenStorage } from '../composables/useTokenStorage';
+import { useAuthUser } from '../composables/useAuthUser';
+import { useCookie, useNuxtApp, useRequestHeaders, useRequestURL } from '#app';
 
-function buildFetchOptions(config: ModuleOptions): FetchOptions {
-  /**
-   * Check if the browser supports the "credentials" option in the Fetch API.
-   */
-  const isCredentialsSupported = 'credentials' in Request.prototype;
+/**
+ * Fetch and initialize the CSRF cookie required for making secure requests.
+ *
+ * @param {ModuleOptions} config - The module configuration options.
+ * @param {ConsolaInstance} logger - The Consola logger instance for logging messages.
+ * @returns {Promise<void>} Resolves when the CSRF cookie is successfully initialized.
+ */
+const fetchCsrfCookie = async (
+  config: ModuleOptions,
+  logger: ConsolaInstance,
+): Promise<void> => {
+  try {
+    await $fetch(config.sanctumEndpoints.csrf, {
+      baseURL: config.apiUrl,
+      credentials: 'include',
+    });
+    logger.debug('CSRF cookie has been initialized');
+  } catch (error) {
+    logger.error('Failed to initialize CSRF cookie', error);
+  }
+};
 
-  /**
-   * The default fetch options.
-   */
-  const options: FetchOptions = {
-    baseURL: config.apiUrl,
-    redirect: 'manual',
-    retry: config.fetchClientOptions.retryAttempts,
-  };
+/**
+ * Attach the CSRF header to the request headers if the CSRF token is available.
+ *
+ * @param {HeadersInit | undefined} headers - The existing request headers.
+ * @param {ModuleOptions} config - The module configuration options.
+ * @param {ConsolaInstance} logger - The Consola logger instance for logging messages.
+ * @returns {Promise<HeadersInit>} The updated headers with the CSRF header attached if available.
+ */
+const attachCsrfHeader = async (
+  headers: HeadersInit | undefined,
+  config: ModuleOptions,
+  logger: ConsolaInstance,
+): Promise<HeadersInit> => {
+  let csrfToken = useCookie(config.csrf.cookieName, { readonly: true });
 
-  /**
-   * If the auth mode is set to "cookie", set the credentials mode to "include" if the browser supports it.
-   */
-  if (config.authMode === 'cookie') {
-    options.credentials = isCredentialsSupported ? 'include' : undefined;
+  if (!csrfToken.value) {
+    await fetchCsrfCookie(config, logger);
+    csrfToken = useCookie(config.csrf.cookieName, { readonly: true });
   }
 
-  return options;
-}
+  if (!csrfToken.value) {
+    logger.warn(
+      `${config.csrf.cookieName} cookie is missing, unable to set ${config.csrf.headerName} header`,
+    );
+    return headers ?? {};
+  }
 
-export default function createFetchService(nuxtApp: NuxtApp) {
-  const options = getOptions();
-  const user = useSanctumUser();
+  logger.debug(`Added ${config.csrf.headerName} header to the request`);
+  return {
+    ...headers,
+    [config.csrf.headerName]: csrfToken.value,
+  };
+};
 
-  const logger = createLogger(options.logLevel);
+/**
+ * Generate server-side headers including cookies and the origin information.
+ *
+ * @param {HeadersInit | undefined} headers - The existing request headers.
+ * @param {ModuleOptions} config - The module configuration options.
+ * @returns {HeadersInit} The generated headers for server-side requests.
+ */
+const generateServerHeaders = (
+  headers: HeadersInit | undefined,
+  config: ModuleOptions,
+): HeadersInit => {
+  const clientCookies = useRequestHeaders(['cookie']);
+  const origin = config.appOriginUrl ?? useRequestURL().origin;
 
-  return $fetch.create({
-    ...buildFetchOptions(options),
+  return {
+    ...headers,
+    Referer: origin,
+    Origin: origin,
+    ...clientCookies,
+  };
+};
 
-    async onRequest(context: FetchContext): Promise<void> {
-      await nuxtApp.runWithContext(async () => {
-        await onRequestHandler(context, nuxtApp);
-      });
+/**
+ * Add the authentication token to the request headers if it exists in storage.
+ *
+ * @param {HeadersInit} headers - The existing request headers.
+ * @param {ConsolaInstance} logger - The Consola logger instance for logging messages.
+ * @returns {Promise<HeadersInit>} The updated headers with the authentication token attached if available.
+ */
+const retrieveAndAttachToken = async (
+  headers: HeadersInit,
+  logger: ConsolaInstance,
+): Promise<HeadersInit> => {
+  const nuxtApp = useNuxtApp();
+  const token = await useTokenStorage(nuxtApp).get();
+
+  if (!token) {
+    logger.debug('Authentication token is not set in the storage');
+    return headers;
+  }
+
+  return {
+    ...headers,
+    Authorization: `Bearer ${token}`,
+  };
+};
+
+/**
+ * Handle authentication for the request based on the configured authentication mode.
+ *
+ * @param {FetchContext} context - The fetch context, including request options and headers.
+ * @param {ModuleOptions} config - The module configuration options.
+ * @param {ConsolaInstance} logger - The Consola logger instance for logging messages.
+ * @returns {Promise<void>} Resolves when the request headers have been processed.
+ */
+const processRequestAuth = async (
+  context: FetchContext,
+  config: ModuleOptions,
+  logger: ConsolaInstance,
+): Promise<void> => {
+  const method = context.options.method?.toLowerCase() ?? 'get';
+
+  context.options.headers = {
+    Accept: 'application/json',
+    ...context.options.headers,
+  };
+
+  if (context.options.body instanceof FormData) {
+    context.options.method = 'POST';
+    context.options.body.append('_method', method.toUpperCase());
+  }
+
+  if (config.authMode === 'cookie') {
+    const SECURE_METHODS = new Set(['post', 'delete', 'put', 'patch']);
+
+    if (import.meta.server) {
+      context.options.headers = generateServerHeaders(
+        context.options.headers,
+        config,
+      );
+    }
+    if (SECURE_METHODS.has(method)) {
+      context.options.headers = await attachCsrfHeader(
+        context.options.headers,
+        config,
+        logger,
+      );
+    }
+  } else if (config.authMode === 'token') {
+    context.options.headers = await retrieveAndAttachToken(
+      context.options.headers || {},
+      logger,
+    );
+  }
+};
+
+/**
+ * Get the appropriate credentials mode for the fetch request based on browser support.
+ *
+ * @returns {RequestCredentials | undefined} The credentials mode ('include' if supported, undefined otherwise).
+ */
+const getCredentialsMode = (): RequestCredentials | undefined => {
+  return 'credentials' in Request.prototype ? 'include' : undefined;
+};
+
+/**
+ * Create and configure a new fetch service instance with the Sanctum module's settings.
+ *
+ * @param {ConsolaInstance} logger - The Consola logger instance for logging messages.
+ * @returns {$Fetch} A configured fetch service instance ready for making API requests.
+ */
+export default function createFetchService(logger: ConsolaInstance): $Fetch {
+  const config = useSanctumOptions();
+
+  const httpOptions: FetchOptions = {
+    baseURL: config.apiUrl,
+    credentials: getCredentialsMode(),
+    redirect: 'manual',
+    retry: false,
+
+    onRequest: async (context: FetchContext): Promise<void> => {
+      await processRequestAuth(context, config, logger);
     },
 
-    async onResponseError({ response }): Promise<void> {
+    onResponseError: async ({ response }): Promise<void> => {
       if (response.status === 419) {
         logger.warn('CSRF token mismatch');
-        return;
-      }
-
-      if (response.status === 401) {
+      } else if (response.status === 401) {
+        const user = useAuthUser();
         if (user.value !== null) {
           user.value = null;
         }
       }
     },
-  });
+  };
+
+  return $fetch.create(httpOptions) as $Fetch;
 }
