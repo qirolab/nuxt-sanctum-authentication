@@ -2,32 +2,68 @@ import { useSanctumOptions } from './useSanctumOptions';
 import { unref } from '#imports';
 import { useCookie, useState, type NuxtApp } from '#app';
 
-export function useTokenStorage(nuxtApp: NuxtApp) {
-  const { tokenStorageKey } = useSanctumOptions();
-  const tokenState = useState<string | undefined | null>(
-    tokenStorageKey,
-    () => null,
+const cookieTokenProvider = {
+  get(tokenKey: string) {
+    const cookie = useCookie(tokenKey, { readonly: true });
+    return unref(cookie.value);
+  },
+
+  set(tokenKey: string, token?: string) {
+    const cookie = useCookie(tokenKey, { secure: true });
+    cookie.value = token;
+  },
+};
+
+const localStorageTokenProvider = {
+  get(tokenKey: string) {
+    if (import.meta.server) {
+      return undefined;
+    }
+    return window.localStorage.getItem(tokenKey) ?? undefined;
+  },
+
+  set(tokenKey: string, token?: string) {
+    if (import.meta.server) {
+      return;
+    }
+
+    if (!token) {
+      window.localStorage.removeItem(tokenKey);
+      return;
+    }
+
+    window.localStorage.setItem(tokenKey, token);
+  },
+};
+
+export function useTokenStorage(nuxtApp: NuxtApp): {
+  get(): Promise<string | undefined>;
+  set(tokenData?: string): Promise<void>;
+} {
+  const { token } = useSanctumOptions();
+
+  const tokenProvider =
+    token.provider === 'localStorage'
+      ? localStorageTokenProvider
+      : cookieTokenProvider;
+
+  const tokenState = useState<string | undefined>(
+    token.storageKey,
+    () => undefined,
   );
 
-  async function get() {
-    return await nuxtApp.runWithContext(() => {
-      const cookie = useCookie(tokenStorageKey, { readonly: true });
-
-      return unref(cookie.value) ?? tokenState.value;
-    });
-  }
-
-  async function set(token?: string) {
-    await nuxtApp.runWithContext(() => {
-      const cookie = useCookie(tokenStorageKey, { secure: true });
-
-      cookie.value = token;
-      tokenState.value = token;
-    });
-  }
-
   return {
-    get,
-    set,
+    get: async () => {
+      return await nuxtApp.runWithContext(() => {
+        return tokenProvider.get(token.storageKey) ?? tokenState.value;
+      });
+    },
+
+    set: async (tokenData?: string) => {
+      await nuxtApp.runWithContext(() => {
+        tokenProvider.set(token.storageKey, tokenData);
+        tokenState.value = tokenData;
+      });
+    },
   };
 }
