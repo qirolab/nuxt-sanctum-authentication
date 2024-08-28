@@ -19,10 +19,10 @@ export interface ModuleOptions {
   appOriginUrl?: string;
 
   /**
-   * The key to use to store the user identity in the `useState` variable.
-   * @default 'user.identity'
+   * The key to use to store the authenticated user in the `useState` variable.
+   * @default 'sanctum.authenticated.user'
    */
-  userIdentityStateKey: string;
+  userStateKey: string;
 
   /**
    * The key to store the token in the storage.
@@ -124,6 +124,20 @@ export interface ModuleOptions {
      * @default '/'
      */
     redirectToAfterLogout: string | false;
+  };
+
+  middlewareNames: {
+    /**
+     * Middleware name for authenticated users.
+     * @default '$auth'
+     */
+    auth: string;
+
+    /**
+     * Middleware name for guest users.
+     * @default '$guest'
+     */
+    guest: string;
   };
 
   /**
