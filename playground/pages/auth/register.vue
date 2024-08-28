@@ -12,11 +12,9 @@ const form = ref({
   password_confirmation: '',
 });
 
-const sanctumFetch = useSanctumFetch();
-
 async function submit() {
   try {
-    await sanctumFetch('/register', {
+    await useSanctumFetch('/register', {
       method: 'post',
       body: form.value,
     });

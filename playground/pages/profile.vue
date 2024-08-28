@@ -14,11 +14,9 @@ const form = ref({
 
 const errors = ref<{ [key: string]: string[] }>({});
 
-const sanctumFetch = useSanctumFetch();
-
 async function submit() {
   try {
-    await sanctumFetch('/api/profile', {
+    await useSanctumFetch('/api/profile', {
       method: 'post',
       body: form.value,
     });
