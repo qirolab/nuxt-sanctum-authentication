@@ -1,46 +1,22 @@
-import { FetchError } from 'ofetch';
-import { createLogger, getOptions } from './helpers';
 import createFetchService from './services/createFetchService';
+import { useAuthUser } from './composables/useAuthUser';
+import { createLogger } from './helpers/createLogger';
+import { useSanctumOptions } from './composables/useSanctumOptions';
 import { defineNuxtPlugin } from '#app';
-import { useSanctumUser } from '#imports';
 
-export default defineNuxtPlugin(async (_nuxtApp) => {
-  const { sanctumEndpoints, logLevel } = getOptions();
-  const logger = createLogger(logLevel);
-  const fetchService = createFetchService(_nuxtApp);
+export default defineNuxtPlugin(async () => {
+  const options = useSanctumOptions();
+  const user = useAuthUser();
+  const logger = createLogger(options.logLevel);
+  const fetchService = createFetchService(logger);
 
-  const ensureUser = async () => {
-    if (!useSanctumUser().value) {
-      try {
-        useSanctumUser().value = await fetchService(sanctumEndpoints.user);
-      } catch (error) {
-        if (error instanceof FetchError) {
-          await handleFetchError(error);
-        } else {
-          logger.error('Failed to load user identity from API.', error);
-        }
-      }
+  if (!user.value) {
+    try {
+      user.value = await fetchService(options.sanctumEndpoints.user);
+    } catch (error) {
+      console.debug(error);
     }
-  };
-
-  const handleFetchError = async (error: FetchError) => {
-    if (error.response && error.response.status === 401) {
-      logger.debug(
-        `User authentication failed with status code ${error.response.status}.`,
-      );
-    } else if (error.response && error.response.status === 419) {
-      logger.debug(
-        `User session expired with status code ${error.response.status}.`,
-      );
-    } else {
-      logger.error(
-        `An unexpected error occurred while fetching the user's identity.`,
-        error,
-      );
-    }
-  };
-
-  await ensureUser();
+  }
 
   return {
     provide: {
