@@ -1,17 +1,17 @@
 import { useSanctumAuth } from '../composables/useSanctumAuth';
-import { getOptions, trimTrailingSlash } from '../helpers';
+import { useSanctumOptions } from '../composables/useSanctumOptions';
 import { defineNuxtRouteMiddleware, navigateTo, createError } from '#app';
 
 export default defineNuxtRouteMiddleware(async (to, _from) => {
   const { isLoggedIn } = useSanctumAuth();
-  const { redirect } = getOptions();
+  const { redirect } = useSanctumOptions();
 
   if (!isLoggedIn.value) return;
 
   const { enableIntendedRedirect, guestOnlyRedirect } = redirect;
 
   if (enableIntendedRedirect) {
-    const currentPath = trimTrailingSlash(to.path);
+    const currentPath = to.path;
     const requestedRoute = to.query.redirect as string;
 
     if (requestedRoute && requestedRoute !== currentPath) {
