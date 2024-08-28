@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ['sanctum:guest'],
+  middleware: ['$guest'],
 });
 
 const { refreshUser } = useSanctumAuth();
