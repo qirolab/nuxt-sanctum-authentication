@@ -1,9 +1,9 @@
-import { getOptions } from '../helpers';
+import { useSanctumOptions } from './useSanctumOptions';
 import { unref } from '#imports';
 import { useCookie, useState, type NuxtApp } from '#app';
 
 export function useTokenStorage(nuxtApp: NuxtApp) {
-  const { tokenStorageKey } = getOptions();
+  const { tokenStorageKey } = useSanctumOptions();
   const tokenState = useState<string | undefined | null>(
     tokenStorageKey,
     () => null,
