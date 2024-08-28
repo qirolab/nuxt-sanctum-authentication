@@ -25,10 +25,21 @@ export interface ModuleOptions {
   userStateKey: string;
 
   /**
-   * The key to store the token in the storage.
-   * @default 'AUTH_TOKEN'
+   * The token specific options.
    */
-  tokenStorageKey: string;
+  token: {
+    /**
+     * The key to store the token in the storage.
+     * @default 'AUTH_TOKEN'
+     */
+    storageKey: string;
+
+    /**
+     * The storage provider to use for the token.
+     * @default 'cookie'
+     */
+    provider?: 'cookie' | 'localStorage';
+  };
 
   /**
    * OFetch client specific options.

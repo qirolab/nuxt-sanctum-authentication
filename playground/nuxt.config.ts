@@ -10,7 +10,10 @@ export default defineNuxtConfig({
     apiUrl: 'http://laravel-api.test',
     authMode: 'cookie',
     userStateKey: 'sanctum.authenticated.user',
-    tokenStorageKey: 'AUTH_TOKEN',
+    token: {
+      storageKey: 'AUTH_TOKEN',
+      provider: 'cookie',
+    },
     fetchClientOptions: {
       retryAttempts: false,
     },

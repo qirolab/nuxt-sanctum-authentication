@@ -25,7 +25,10 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
   defaults: {
     authMode: 'cookie',
     userStateKey: 'sanctum.authenticated.user',
-    tokenStorageKey: 'AUTH_TOKEN',
+    token: {
+      storageKey: 'AUTH_TOKEN',
+      provider: 'cookie',
+    },
     fetchClientOptions: {
       retryAttempts: false,
     },
