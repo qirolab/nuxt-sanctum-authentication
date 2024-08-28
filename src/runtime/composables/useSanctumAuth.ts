@@ -9,14 +9,13 @@ export const useSanctumAuth = <T>() => {
   const nuxtApp = useNuxtApp();
   const options = useSanctumOptions();
   const user = useAuthUser<T>();
-  const client = useSanctumFetch();
 
   const isLoggedIn = computed(() => {
     return user.value !== null;
   });
 
   async function refreshUser() {
-    user.value = await client<T>(options.sanctumEndpoints.user);
+    user.value = await useSanctumFetch<T>(options.sanctumEndpoints.user);
   }
 
   async function login(credentials: Record<string, any>) {
@@ -35,10 +34,13 @@ export const useSanctumAuth = <T>() => {
       return await navigateTo(redirect.redirectToAfterLogin);
     }
 
-    const response = await client<{ token: string }>(sanctumEndpoints.login, {
-      method: 'post',
-      body: credentials,
-    });
+    const response = await useSanctumFetch<{ token: string }>(
+      sanctumEndpoints.login,
+      {
+        method: 'post',
+        body: credentials,
+      },
+    );
 
     // Handle token or cookie auth
     if (authMode === 'token') {
@@ -71,7 +73,7 @@ export const useSanctumAuth = <T>() => {
       return;
     }
 
-    await client(options.sanctumEndpoints.logout, { method: 'post' });
+    await useSanctumFetch(options.sanctumEndpoints.logout, { method: 'post' });
 
     user.value = null;
 
