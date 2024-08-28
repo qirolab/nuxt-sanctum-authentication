@@ -18,7 +18,10 @@ export const useSanctumAuth = <T>() => {
     user.value = await useSanctumFetch<T>(options.sanctumEndpoints.user);
   }
 
-  async function login(credentials: Record<string, any>) {
+  async function login(
+    credentials: Record<string, any>,
+    callback?: (user: T | null) => any,
+  ) {
     const { redirect, authMode, sanctumEndpoints } = options;
     const currentRoute = useRoute();
 
@@ -49,6 +52,10 @@ export const useSanctumAuth = <T>() => {
 
     await refreshUser();
 
+    if (callback) {
+      return callback(user.value);
+    }
+
     // Handle intended redirect
     if (redirect.enableIntendedRedirect) {
       const requestedRoute = currentRoute.query.redirect;
@@ -68,7 +75,7 @@ export const useSanctumAuth = <T>() => {
     return await navigateTo(redirect.redirectToAfterLogin);
   }
 
-  async function logout(): Promise<void> {
+  async function logout(callback?: () => any): Promise<void> {
     if (!isLoggedIn.value) {
       return;
     }
@@ -79,6 +86,10 @@ export const useSanctumAuth = <T>() => {
 
     if (options.authMode === 'token') {
       await useTokenStorage(nuxtApp).set(undefined);
+    }
+
+    if (callback) {
+      return callback();
     }
 
     const currentPath = useRoute().path;
