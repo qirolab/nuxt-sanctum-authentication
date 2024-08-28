@@ -1,5 +1,12 @@
 <script lang="ts" setup>
 const { isLoggedIn, user, logout } = useSanctumAuth<{ name: string }>();
+
+async function logoutUser() {
+  await logout(() => {
+    console.log('logout successfully');
+    navigateTo('/auth/login');
+  });
+}
 </script>
 
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
@@ -27,7 +34,7 @@ const { isLoggedIn, user, logout } = useSanctumAuth<{ name: string }>();
             <NuxtLink to="/profile"> Profile </NuxtLink>
           </li>
           <li>
-            <button @click="logout">Logout</button>
+            <button @click="logoutUser">Logout</button>
           </li>
           <li>
             {{ user?.name }}
