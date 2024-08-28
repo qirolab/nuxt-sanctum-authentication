@@ -2,7 +2,7 @@
 import { FetchError } from 'ofetch';
 
 definePageMeta({
-  middleware: ['sanctum:auth'],
+  middleware: ['$auth'],
 });
 
 const { user, refreshUser } = useSanctumAuth<{ name: string; email: string }>();
@@ -45,7 +45,7 @@ onMounted(() => {
   <form @submit.prevent="submit">
     <div class="profile-form">
       <h1 class="heading">Profile</h1>
-      {{ user }}
+      <pre>{{ user }}</pre>
       <div>
         <label for="name">Name</label>
         <input id="name" v-model="form.name" type="text" />
