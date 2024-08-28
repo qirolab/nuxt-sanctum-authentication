@@ -22,7 +22,6 @@ export default createConfigForNuxt({
     '@typescript-eslint/no-explicit-any': 'off',
     '@stylistic/semi': ['error', 'always'],
     '@stylistic/brace-style': 'off',
-    '@stylistic/operator-linebreak': ['error', 'after'],
     '@stylistic/member-delimiter-style': [
       'error',
       {
@@ -35,6 +34,17 @@ export default createConfigForNuxt({
           requireLast: false,
         },
         multilineDetection: 'brackets',
+      },
+    ],
+    // "@stylistic/operator-linebreak": "off",
+    '@stylistic/operator-linebreak': [
+      'error',
+      'after',
+      {
+        overrides: {
+          '?': 'before',
+          ':': 'before',
+        },
       },
     ],
     'prettier/prettier': 'error',
