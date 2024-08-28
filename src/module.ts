@@ -7,9 +7,13 @@ import {
   addRouteMiddleware,
 } from '@nuxt/kit';
 import defu from 'defu';
-import { type DeepPartial } from './types';
-import type { ModuleOptions } from './types/ModuleOptions';
-import { MODULE_CONFIG_KEY, MODULE_NAME, MODULE_VERSION } from './module-info';
+import {
+  MODULE_CONFIG_KEY,
+  MODULE_NAME,
+  MODULE_VERSION,
+} from './runtime/helpers/module-info';
+import type { ModuleOptions } from './runtime/types/ModuleOptions';
+import type { DeepPartial } from './runtime/types';
 
 export default defineNuxtModule<DeepPartial<ModuleOptions>>({
   meta: {
@@ -20,8 +24,8 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
 
   defaults: {
     authMode: 'cookie',
-    userIdentityStateKey: 'user.identity',
-    tokenStorageKey: 'AUTH-API-TOKEN',
+    userStateKey: 'sanctum.authenticated.user',
+    tokenStorageKey: 'AUTH_TOKEN',
     fetchClientOptions: {
       retryAttempts: false,
     },
@@ -42,38 +46,42 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
       redirectToAfterLogin: '/',
       redirectToAfterLogout: '/',
     },
+    middlewareNames: {
+      auth: '$auth',
+      guest: '$guest',
+    },
     logLevel: 3,
   },
 
-  setup(options, nuxt) {
+  setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url);
 
     const runtimeDir = resolver.resolve('./runtime');
-    nuxt.options.build.transpile.push(runtimeDir);
+    _nuxt.options.build.transpile.push(runtimeDir);
 
-    const moduleOptions = defu(
-      nuxt.options.runtimeConfig.public[MODULE_CONFIG_KEY] as any,
-      options,
-    );
-    nuxt.options.runtimeConfig.public[MODULE_CONFIG_KEY] = moduleOptions;
+    const sanctumOptions = defu(
+      _nuxt.options.runtimeConfig.public.sanctum as any,
+      _options,
+    ) as ModuleOptions;
+    _nuxt.options.runtimeConfig.public.sanctum = sanctumOptions;
 
     const logger = useLogger(MODULE_NAME, {
-      level: moduleOptions.logLevel,
+      level: sanctumOptions.logLevel,
     });
 
-    logger.start(`Initializing ${MODULE_NAME} module...`);
+    logger.start(`Initialize ${MODULE_NAME} Module...`);
 
+    // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin(resolver.resolve('./runtime/plugin'));
     addImportsDir(resolver.resolve('./runtime/composables'));
 
     addRouteMiddleware({
-      name: 'sanctum:auth',
-      path: resolver.resolve('./runtime/middleware/sanctum.auth'),
+      name: sanctumOptions.middlewareNames.auth,
+      path: resolver.resolve('./runtime/middleware/auth'),
     });
-
     addRouteMiddleware({
-      name: 'sanctum:guest',
-      path: resolver.resolve('./runtime/middleware/sanctum.guest'),
+      name: sanctumOptions.middlewareNames.guest,
+      path: resolver.resolve('./runtime/middleware/guest'),
     });
   },
 });
