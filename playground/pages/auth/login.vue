@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['sanctum:guest'],
+  middleware: ['$guest'],
 });
 
 const form = ref({
