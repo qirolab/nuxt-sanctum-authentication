@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ['sanctum:auth'],
+  middleware: ['$auth'],
 });
 
 const { user } = useSanctumAuth();
@@ -11,12 +11,13 @@ const { user } = useSanctumAuth();
   <div
     style="
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       margin-top: 20px;
     "
   >
     <h1 style="text-align: center">Dashboard</h1>
-    {{ user }}
+    <pre>{{ user }}</pre>
   </div>
 </template>
