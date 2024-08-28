@@ -1,72 +1,75 @@
 import { computed } from 'vue';
-import { getOptions, trimTrailingSlash } from '../helpers';
 import { useSanctumFetch } from './useSanctumFetch';
-import { useSanctumUser } from './useSanctumUser';
+import { useSanctumOptions } from './useSanctumOptions';
+import { useAuthUser } from './useAuthUser';
 import { useTokenStorage } from './useTokenStorage';
 import { navigateTo, useNuxtApp, useRoute } from '#app';
 
 export const useSanctumAuth = <T>() => {
-  const options = getOptions();
   const nuxtApp = useNuxtApp();
-
-  // Initialize fetch client and user state
+  const options = useSanctumOptions();
+  const user = useAuthUser<T>();
   const client = useSanctumFetch();
-  const user = useSanctumUser<T>();
 
-  // Computed property for login status
-  const isLoggedIn = computed(() => user.value !== null);
+  const isLoggedIn = computed(() => {
+    return user.value !== null;
+  });
 
-  // Refresh user function
   async function refreshUser() {
     user.value = await client<T>(options.sanctumEndpoints.user);
   }
 
-  // Login function
   async function login(credentials: Record<string, any>) {
+    const { redirect, authMode, sanctumEndpoints } = options;
     const currentRoute = useRoute();
-    const currentPath = trimTrailingSlash(currentRoute.path);
 
-    const response = await client(options.sanctumEndpoints.login, {
+    if (isLoggedIn.value) {
+      // Already logged in, check for redirect
+      if (
+        !redirect.redirectToAfterLogin ||
+        redirect.redirectToAfterLogin === currentRoute.path
+      ) {
+        return;
+      }
+
+      return await navigateTo(redirect.redirectToAfterLogin);
+    }
+
+    const response = await client<{ token: string }>(sanctumEndpoints.login, {
       method: 'post',
       body: credentials,
     });
 
-    if (options.authMode === 'token') {
+    // Handle token or cookie auth
+    if (authMode === 'token') {
       await useTokenStorage(nuxtApp).set(response.token);
     }
 
     await refreshUser();
 
-    if (options.redirect.enableIntendedRedirect) {
+    // Handle intended redirect
+    if (redirect.enableIntendedRedirect) {
       const requestedRoute = currentRoute.query.redirect;
-      if (requestedRoute && requestedRoute !== currentPath) {
-        await nuxtApp.runWithContext(
-          async () => await navigateTo(requestedRoute as string),
-        );
-        return;
+      if (requestedRoute && requestedRoute !== currentRoute.path) {
+        return await navigateTo(requestedRoute as string);
       }
     }
 
+    // No intended redirect, check for default redirect
     if (
-      !options.redirect.redirectToAfterLogin ||
-      currentRoute.path === options.redirect.redirectToAfterLogin
+      !redirect.redirectToAfterLogin ||
+      currentRoute.path === redirect.redirectToAfterLogin
     ) {
       return;
     }
 
-    await useNuxtApp().runWithContext(
-      async () =>
-        await navigateTo(options.redirect.redirectToAfterLogin as string),
-    );
+    return await navigateTo(redirect.redirectToAfterLogin);
   }
 
-  async function logout() {
+  async function logout(): Promise<void> {
     if (!isLoggedIn.value) {
       return;
     }
-
-    const currentRoute = useRoute();
-    const currentPath = trimTrailingSlash(currentRoute.path);
 
     await client(options.sanctumEndpoints.logout, { method: 'post' });
 
@@ -76,6 +79,7 @@ export const useSanctumAuth = <T>() => {
       await useTokenStorage(nuxtApp).set(undefined);
     }
 
+    const currentPath = useRoute().path;
     if (
       !options.redirect.redirectToAfterLogout ||
       currentPath === options.redirect.redirectToAfterLogout
@@ -83,14 +87,11 @@ export const useSanctumAuth = <T>() => {
       return;
     }
 
-    await useNuxtApp().runWithContext(
-      async () =>
-        await navigateTo(options.redirect.redirectToAfterLogout as string),
-    );
+    await navigateTo(options.redirect.redirectToAfterLogout as string);
   }
 
   return {
-    config: getOptions(),
+    options,
     user,
     isLoggedIn,
     refreshUser,
