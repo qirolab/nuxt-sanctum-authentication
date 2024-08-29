@@ -1,14 +1,14 @@
 import { computed } from 'vue';
 import { useSanctumFetch } from './useSanctumFetch';
 import { useSanctumOptions } from './useSanctumOptions';
-import { useAuthUser } from './useAuthUser';
+import { useCurrentUser } from './useCurrentUser';
 import { useTokenStorage } from './useTokenStorage';
 import { navigateTo, useNuxtApp, useRoute } from '#app';
 
 export const useSanctumAuth = <T>() => {
   const nuxtApp = useNuxtApp();
   const options = useSanctumOptions();
-  const user = useAuthUser<T>();
+  const user = useCurrentUser<T>();
 
   const isLoggedIn = computed(() => {
     return user.value !== null;

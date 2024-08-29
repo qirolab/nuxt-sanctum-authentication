@@ -3,7 +3,7 @@ import type { ConsolaInstance } from 'consola';
 import { useSanctumOptions } from '../composables/useSanctumOptions';
 import type { ModuleOptions } from '../types/ModuleOptions';
 import { useTokenStorage } from '../composables/useTokenStorage';
-import { useAuthUser } from '../composables/useAuthUser';
+import { useCurrentUser } from '../composables/useCurrentUser';
 import { useCookie, useNuxtApp, useRequestHeaders, useRequestURL } from '#app';
 
 /**
@@ -190,7 +190,7 @@ export default function createFetchService(logger: ConsolaInstance): $Fetch {
       if (response.status === 419) {
         logger.warn('CSRF token mismatch');
       } else if (response.status === 401) {
-        const user = useAuthUser();
+        const user = useCurrentUser();
         if (user.value !== null) {
           user.value = null;
         }
