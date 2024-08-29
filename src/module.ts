@@ -63,16 +63,16 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     _nuxt.options.build.transpile.push(runtimeDir);
 
     const sanctumOptions = defu(
-      _nuxt.options.runtimeConfig.public.sanctum as any,
+      _nuxt.options.runtimeConfig.public[MODULE_CONFIG_KEY] as any,
       _options,
     ) as ModuleOptions;
-    _nuxt.options.runtimeConfig.public.sanctum = sanctumOptions;
+    _nuxt.options.runtimeConfig.public[MODULE_CONFIG_KEY] = sanctumOptions;
 
     const logger = useLogger(MODULE_NAME, {
       level: sanctumOptions.logLevel,
     });
 
-    logger.start(`Initialize ${MODULE_NAME} Module...`);
+    logger.start(`Initialize "${MODULE_NAME}" Module...`);
 
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin(resolver.resolve('./runtime/plugin'));
