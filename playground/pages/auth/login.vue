@@ -8,7 +8,7 @@ const form = ref({
   password: '',
 });
 
-const { login } = useSanctumAuth();
+const { login } = useSanctum();
 
 async function submit() {
   await login(form.value);

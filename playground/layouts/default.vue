@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { isLoggedIn, user, logout } = useSanctumAuth<{ name: string }>();
+const { isLoggedIn, user, logout } = useSanctum<{ name: string }>();
 
 async function logoutUser() {
   await logout(() => {

@@ -5,7 +5,7 @@ definePageMeta({
   middleware: ['$auth'],
 });
 
-const { user, refreshUser } = useSanctumAuth<{ name: string; email: string }>();
+const { user, refreshUser } = useSanctum<{ name: string; email: string }>();
 
 const form = ref({
   name: '',

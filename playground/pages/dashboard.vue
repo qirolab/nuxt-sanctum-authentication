@@ -3,7 +3,7 @@ definePageMeta({
   middleware: ['$auth'],
 });
 
-const { user } = useSanctumAuth();
+const { user } = useSanctum();
 </script>
 
 <!-- eslint-disable vue/singleline-html-element-content-newline -->

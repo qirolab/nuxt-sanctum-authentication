@@ -3,7 +3,7 @@ definePageMeta({
   middleware: ['$guest'],
 });
 
-const { refreshUser } = useSanctumAuth();
+const { refreshUser } = useSanctum();
 
 const form = ref({
   name: '',
