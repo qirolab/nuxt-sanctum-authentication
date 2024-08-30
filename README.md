@@ -62,13 +62,6 @@ The `nuxt-sanctum-authentication` module provides a simple and efficient way to 
 
 # **Installation**
 
-### **Minimum Requirements**
-
-Before getting started, ensure that your project meets the following minimum requirements:
-
-* **Nuxt Version:** ^3.9.0
-
-
 ### **Installing the Nuxt Module**
 
 To install the `nuxt-sanctum-authentication` module and automatically register it in your `nuxt.config.ts`, run the following command:
@@ -85,13 +78,13 @@ If you prefer a manual approach, you can install the `nuxt-sanctum-authenticatio
 
 ```bash
 # Using pnpm
-pnpm add -D @qirolab/nuxt-sanctum-authentication
+pnpm add @qirolab/nuxt-sanctum-authentication
 
 # Using yarn
-yarn add --dev @qirolab/nuxt-sanctum-authentication
+yarn add @qirolab/nuxt-sanctum-authentication
 
 # Using npm
-npm i --save-dev @qirolab/nuxt-sanctum-authentication
+npm i @qirolab/nuxt-sanctum-authentication
 ```
 
 After installing the module, you need to register it manually in your `nuxt.config.ts` file. Add the module to the `modules` array like this:
