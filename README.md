@@ -4,7 +4,6 @@
 - [Introduction](#introduction)
     - [Key Features](#key-features)
 - [Installation](#installation)
-    - [Minimum Requirements](#minimum-requirements)
     - [Installing the Nuxt Module](#installing-the-nuxt-module)
     - [Manual Installation](#manual-installation)
     - [Required Configuration](#required-configuration)
