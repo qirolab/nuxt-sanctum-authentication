@@ -256,7 +256,7 @@ For more detailed information and further configuration options, you can refer t
 
 ## **Module Configuration**
 
-### Required **Configuration**
+### Required Configuration
 
 The only required configuration option is `apiUrl`:
 
