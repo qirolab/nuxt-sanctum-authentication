@@ -1,9 +1,9 @@
-import { useSanctumAuth } from '../composables/useSanctumAuth';
+import { useSanctum } from '../composables/useSanctum';
 import { useSanctumOptions } from '../composables/useSanctumOptions';
 import { defineNuxtRouteMiddleware, navigateTo, createError } from '#app';
 
 export default defineNuxtRouteMiddleware(async (to, _from) => {
-  const { isLoggedIn } = useSanctumAuth();
+  const { isLoggedIn } = useSanctum();
   const { redirect } = useSanctumOptions();
 
   if (!isLoggedIn.value) return;

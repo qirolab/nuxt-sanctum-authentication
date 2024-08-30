@@ -1,10 +1,10 @@
 import type { RouteLocationRaw } from 'vue-router';
-import { useSanctumAuth } from '../composables/useSanctumAuth';
+import { useSanctum } from '../composables/useSanctum';
 import { useSanctumOptions } from '../composables/useSanctumOptions';
 import { defineNuxtRouteMiddleware, navigateTo, createError } from '#app';
 
 export default defineNuxtRouteMiddleware((to) => {
-  const { isLoggedIn } = useSanctumAuth();
+  const { isLoggedIn } = useSanctum();
   if (isLoggedIn.value) {
     return;
   }
