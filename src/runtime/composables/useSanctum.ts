@@ -5,7 +5,7 @@ import { useCurrentUser } from './useCurrentUser';
 import { useTokenStorage } from './useTokenStorage';
 import { navigateTo, useNuxtApp, useRoute } from '#app';
 
-export const useSanctumAuth = <T>() => {
+export const useSanctum = <T>() => {
   const nuxtApp = useNuxtApp();
   const options = useSanctumOptions();
   const user = useCurrentUser<T>();
