@@ -7,18 +7,13 @@ import {
   addRouteMiddleware,
 } from '@nuxt/kit';
 import defu from 'defu';
-import {
-  MODULE_CONFIG_KEY,
-  MODULE_NAME,
-  MODULE_VERSION,
-} from './runtime/helpers/module-info';
+import { MODULE_CONFIG_KEY, MODULE_NAME } from './runtime/helpers/module-info';
 import type { ModuleOptions } from './runtime/types/ModuleOptions';
 import type { DeepPartial } from './runtime/types';
 
 export default defineNuxtModule<DeepPartial<ModuleOptions>>({
   meta: {
     name: MODULE_NAME,
-    version: MODULE_VERSION,
     configKey: MODULE_CONFIG_KEY,
   },
 
