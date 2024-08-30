@@ -1,3 +1,4 @@
+import type { $Fetch } from 'ofetch';
 import createFetchService from './services/createFetchService';
 import { useCurrentUser } from './composables/useCurrentUser';
 import { createLogger } from './helpers/createLogger';
@@ -8,7 +9,7 @@ export default defineNuxtPlugin(async () => {
   const options = useSanctumOptions();
   const user = useCurrentUser();
   const logger = createLogger(options.logLevel);
-  const fetchService = createFetchService(logger);
+  const fetchService: $Fetch = createFetchService(logger);
 
   if (!user.value) {
     try {
