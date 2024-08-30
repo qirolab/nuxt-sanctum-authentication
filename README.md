@@ -52,14 +52,9 @@ The `nuxt-sanctum-authentication` module provides a simple and efficient way to 
 
 * **Bearer Token Management:** The module takes care of managing Bearer tokens, which are used for secure access to protected resources. This ensures that the right authentication tokens are included in your requests automatically.
 
-* `useSanctumAuth` Composable: This composable provides an easy way to access the current user's data and perform authentication actions, like logging in and out, directly within your components.
-
 * **Pre-configured Authentication Middleware:** The module includes a middleware that's ready to use, allowing you to protect pages that require user authentication with minimal setup.
 
 * **Integration with Nuxt's** `ofetch` Client: The module is fully compatible with Nuxt's `ofetch` client, making it easy to make authenticated HTTP requests in your application.
-
-* **TypeScript Support:** The module is fully typed, offering TypeScript support to provide better development experience, including type checking and auto-completion, ensuring your code is both robust and maintainable.
-
 
 > **Important:** Before using this module, make sure that Laravel Sanctum is correctly configured on your backend. For more detailed setup instructions, refer to the [Laravel Sanctum documentation](https://laravel.com/docs/11.x/sanctum).
 
