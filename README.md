@@ -24,7 +24,7 @@
     - [Advanced Configuration Options](#advanced-configuration-options)
     - [Overriding Configuration](#overriding-configuration)
 - [Composables Overview](#composables-overview)
-    - [`useSanctumAuth()`](#usesanctumauth)
+    - [`useSanctum()`](#useSanctum)
     - [`useCurrentUser()`](#usecurrentuser)
     - [`useSanctumFetch()`](#usesanctumfetch)
     - [`useSanctumOptions()`](#usesanctumoptions)
@@ -148,7 +148,7 @@ crucial for maintaining the user's authentication state.
 Once the module is configured, you can authenticate users by sending their credentials to the designated login endpoint. Here's how you can do it:
 
 ```javascript
-const { login } = useSanctumAuth();
+const { login } = useSanctum();
 
 const credentials = {
     email: "john@doe.com",
@@ -210,7 +210,7 @@ export default defineNuxtConfig({
 Once token-based authentication is enabled, you can authenticate users by sending their credentials to the specified login endpoint. Here's an example of how you can perform this operation:
 
 ```javascript
-const { login } = useSanctumAuth();
+const { login } = useSanctum();
 
 const credentials = {
     email: "john@doe.com",
@@ -389,17 +389,17 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
 
 ---
 
-## `useSanctumAuth()`
+## `useSanctum()`
 
 ### **Purpose**
 
-`useSanctumAuth()` is the primary composable for managing authentication within your application. It consolidates various authentication-related functionalities, including logging in, logging out, and accessing the current authenticated user.
+`useSanctum()` is the primary composable for managing authentication within your application. It consolidates various authentication-related functionalities, including logging in, logging out, and accessing the current authenticated user.
 
 ### **Properties**
 
 * `options`:
 
-    * This computed property gives you access to the module's configuration options, such as API endpoints and other settings. It mirrors the output of `useSanctumOptions()` but is conveniently accessible within `useSanctumAuth()`.
+    * This computed property gives you access to the module's configuration options, such as API endpoints and other settings. It mirrors the output of `useSanctumOptions()` but is conveniently accessible within `useSanctum()`.
 
 * `user`:
 
@@ -421,7 +421,7 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
     * Example:
 
         ```javascript
-        const { login } = useSanctumAuth();
+        const { login } = useSanctum();
 
         const userCredentials = {
             email: 'user@mail.com',
@@ -438,7 +438,7 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
     * Example:
 
         ```javascript
-        const { logout } = useSanctumAuth();
+        const { logout } = useSanctum();
 
         await logout();
         ```
@@ -450,7 +450,7 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
     * Example:
 
         ```javascript
-        const { refreshUser } = useSanctumAuth();
+        const { refreshUser } = useSanctum();
 
         await refreshUser();
         ```
@@ -460,7 +460,7 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
 
 ### **Purpose**
 
-`useCurrentUser()` is a dedicated composable for accessing the current authenticated user. It is handy when you need to access user data across various components without needing the full functionality of `useSanctumAuth()`.
+`useCurrentUser()` is a dedicated composable for accessing the current authenticated user. It is handy when you need to access user data across various components without needing the full functionality of `useSanctum()`.
 
 ### **Features**
 
@@ -714,7 +714,7 @@ To determine the specific type of error you've encountered, you can use the foll
 
 ```javascript
 import { FetchError } from 'ofetch';
-const { login } = useSanctumAuth();
+const { login } = useSanctum();
 
 const userCredentials = {
     email: 'user@mail.com',
