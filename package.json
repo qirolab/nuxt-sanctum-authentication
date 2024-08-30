@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-sanctum-authentication",
+  "name": "@qirolab/nuxt-sanctum-authentication",
   "version": "0.1.0",
   "description": "Nuxt 3 module for easy Laravel Sanctum authentication, offering CSRF token management, both cookie and token-based auth, and SSR compatibility.",
   "keywords": [
@@ -13,7 +13,13 @@
     "token-based-auth",
     "cookie-based-auth"
   ],
-  "repository": "qirolab/nuxt-sanctum-authentication",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qirolab/nuxt-sanctum-authentication.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qirolab/nuxt-sanctum-authentication/issues"
+  },
   "author": "Harish Kumar",
   "homepage": "https://qirolab.com",
   "funding": "https://www.buymeacoffee.com/qirolab",
