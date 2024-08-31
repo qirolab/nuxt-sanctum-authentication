@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     host: 'laravel-api.test',
   },
 
-  sanctumAuth: {
+  laravelSanctum: {
     apiUrl: 'http://laravel-api.test',
     authMode: 'cookie',
     userStateKey: 'sanctum.authenticated.user',

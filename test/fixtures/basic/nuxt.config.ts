@@ -5,7 +5,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      sanctumAuth: {
+      laravelSanctum: {
         apiUrl: 'http://localhost:80',
       },
     },
