@@ -59,9 +59,9 @@ The `nuxt-sanctum-authentication` module provides a simple and efficient way to 
 
 ---
 
-# **Installation**
+# Installation
 
-### **Installing the Nuxt Module**
+### Installing the Nuxt Module
 
 To install the `nuxt-sanctum-authentication` module and automatically register it in your `nuxt.config.ts`, run the following command:
 
@@ -71,7 +71,7 @@ npx nuxi@latest module add @qirolab/nuxt-sanctum-authentication
 
 This command will add the module to your project and handle the registration process, saving you the hassle of manual setup.
 
-### **Manual Installation**
+### Manual Installation
 
 If you prefer a manual approach, you can install the `nuxt-sanctum-authentication` module using your package manager of choice. Below are the commands for different package managers:
 
@@ -94,14 +94,14 @@ export default defineNuxtConfig({
 });
 ```
 
-### **Required Configuration**
+### Required Configuration
 
 Once the module is installed and registered, you need to configure it by adding specific options to your `nuxt.config.ts`. This configuration will point the module to your Laravel API:
 
 ```javascript
 export default defineNuxtConfig({
     // nuxt-sanctum-authentication options
-    sanctumAuth: {
+    laravelSanctum: {
         apiUrl: 'http://laravel-api.test', // Replace with your Laravel API URL
     },
 });
@@ -113,24 +113,24 @@ That's it! Your Nuxt app is now equipped with Laravel Sanctum authentication, re
 
 ---
 
-## **SPA Cookie Authentication**
+## SPA Cookie Authentication
 
 The `nuxt-sanctum-authentication` module is specifically designed to seamlessly integrate with Laravel Sanctum's SPA (Single Page Application) cookie-based authentication. This setup provides a secure and efficient way to manage user authentication in your Nuxt 3 application.
 
-### **Configuration**
+### Configuration
 
-To enable SPA cookie-based authentication, you need to set the `sanctumAuth.authMode` property to `cookie` in your `nuxt.config.ts` file:
+To enable SPA cookie-based authentication, you need to set the `laravelSanctum.authMode` property to `cookie` in your `nuxt.config.ts` file:
 
 ```javascript
 export default defineNuxtConfig({
-    sanctumAuth: {
+    laravelSanctum: {
         apiUrl: 'http://laravel-api.test', // Your Laravel API URL
         authMode: 'cookie',
     },
 });
 ```
 
-#### **Domain Configuration**
+#### Domain Configuration
 
 For this authentication mode to work correctly, your Nuxt and Laravel applications must share the same top-level domain. Here's an example setup:
 
@@ -142,7 +142,7 @@ For this authentication mode to work correctly, your Nuxt and Laravel applicatio
 This ensures that cookies can be shared across both applications, which is
 crucial for maintaining the user's authentication state.
 
-### **How It Works**
+### How It Works
 
 Once the module is configured, you can authenticate users by sending their credentials to the designated login endpoint. Here's how you can do it:
 
@@ -160,11 +160,11 @@ await login(credentials);
 
 When the `login` method is called with the user's credentials, the module will handle the authentication process, including obtaining a CSRF token and setting the necessary cookies.
 
-#### **Post-Login Behavior**
+#### Post-Login Behavior
 
-After a successful login, the user will be automatically redirected to the route specified in `sanctumAuth.redirect.redirectToAfterLogin`. From this point on, the module will manage the authentication state, including requesting a CSRF cookie from the API and ensuring that it is included as an `XSRF` header in all subsequent requests.
+After a successful login, the user will be automatically redirected to the route specified in `laravelSanctum.redirect.redirectToAfterLogin`. From this point on, the module will manage the authentication state, including requesting a CSRF cookie from the API and ensuring that it is included as an `XSRF` header in all subsequent requests.
 
-### **Laravel Configuration**
+### Laravel Configuration
 
 To ensure that your Laravel backend properly supports SPA cookie authentication with Nuxt, you need to configure Laravel as follows:
 
@@ -187,24 +187,24 @@ For more detailed instructions, refer to the official Laravel documentation on [
 
 ---
 
-## **API Token Authentication**
+## API Token Authentication
 
 Token-based authentication is generally not recommended for Single Page Applications (SPAs). However, it can be quite useful in specific scenarios, such as mobile or desktop applications, where maintaining a session-based authentication system is less feasible.
 
-### **Configuration**
+### Configuration
 
-To enable API token-based authentication in your Nuxt 3 application, you need to configure the `sanctumAuth.authMode` property to use `token` in your `nuxt.config.ts` file:
+To enable API token-based authentication in your Nuxt 3 application, you need to configure the `laravelSanctum.authMode` property to use `token` in your `nuxt.config.ts` file:
 
 ```javascript
 export default defineNuxtConfig({
-    sanctumAuth: {
+    laravelSanctum: {
         apiUrl: 'http://laravel-api.test', // Your Laravel API URL
         authMode: 'token',
     },
 });
 ```
 
-### **How It Works**
+### How It Works
 
 Once token-based authentication is enabled, you can authenticate users by sending their credentials to the specified login endpoint. Here's an example of how you can perform this operation:
 
@@ -222,7 +222,7 @@ await login(credentials);
 
 When the `login` method is invoked, the credentials are sent to the backend API. Upon successful authentication, the API will return a plain token. This token is then stored by the module and is automatically included in the `Authorization` header for all subsequent requests, ensuring that authenticated API calls are properly authorized.
 
-### **Laravel Configuration**
+### Laravel Configuration
 
 To support token-based authentication on the backend, your Laravel API needs to have appropriate login and logout routes defined in your `api.php` routes file:
 
@@ -234,7 +234,7 @@ Route::post('/logout', DestroyTokenAuthenticationController::class
 ->middleware(['auth:sanctum']);
 ```
 
-#### **Key Considerations:**
+#### Key Considerations:
 
 1. **CSRF Protection**: Ensure that the API requests are not originating from a domain listed in the `SANCTUM_STATEFUL_DOMAINS` environment variable. If they are, you may encounter a CSRF mismatch error, which occurs because Laravel Sanctum is expecting session-based authentication for stateful domains.
 
@@ -253,19 +253,19 @@ For more detailed information and further configuration options, you can refer t
 
 ---
 
-## **Module Configuration**
+## Module Configuration
 
 ### Required Configuration
 
 The only required configuration option is `apiUrl`:
 
 ```javascript
-sanctumAuth: {
+laravelSanctum: {
     apiUrl: 'http://laravel-api.test',
 }
 ```
 
-### **Advanced Configuration Options**
+### Advanced Configuration Options
 
 Here are the available configuration options:
 
@@ -293,7 +293,7 @@ Here are the available configuration options:
 | **middlewareNames.guest** | Middleware name for guest users. | `'$guest'` | `'$guest'` |
 | **logLevel** | Log level for the logger. | `3` | `3` |
 
-### **Overriding Configuration**
+### Overriding Configuration
 
 You can easily override any of the above configuration options in your `nuxt.config.ts` file to suit your application's needs:
 
@@ -302,7 +302,7 @@ export default defineNuxtConfig({
     // List of Nuxt modules to be included
     modules: ['nuxt-sanctum-authentication'],
 
-    sanctumAuth: {
+    laravelSanctum: {
         // The base URL of your Laravel API
         apiUrl: 'http://laravel-api.test',
 
@@ -382,7 +382,7 @@ This configuration file provides a comprehensive setup for the `nuxt-sanctum-aut
 
 ---
 
-# **Composables Overview**
+# Composables Overview
 
 The `nuxt-sanctum-authentication` module equips you with a set of powerful composables designed to simplify Laravel Sanctum authentication in your Nuxt 3 application. These composables provide access to key features like user management, authentication state, API request handling, and configuration management. Below is a detailed explanation of each composable:
 
@@ -390,11 +390,9 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
 
 ## `useSanctum()`
 
-### **Purpose**
-
 `useSanctum()` is the primary composable for managing authentication within your application. It consolidates various authentication-related functionalities, including logging in, logging out, and accessing the current authenticated user.
 
-### **Properties**
+### Properties
 
 * `options`:
 
@@ -409,7 +407,7 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
     * A boolean property that indicates whether a user is currently authenticated. It returns `true` if the user is logged in and `false` otherwise.
 
 
-### **Methods**
+### Methods
 
 * `login(credentials)`:
 
@@ -457,11 +455,9 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
 
 ## `useCurrentUser()`
 
-### **Purpose**
-
 `useCurrentUser()` is a dedicated composable for accessing the current authenticated user. It is handy when you need to access user data across various components without needing the full functionality of `useSanctum()`.
 
-### **Features**
+### Features
 
 * **Typed User Support**:
 
@@ -492,11 +488,9 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
 
 ## `useSanctumFetch()`
 
-### **Purpose**
-
 `useSanctumFetch()` provides a pre-configured `ofetch` client tailored for use with Laravel Sanctum. This composable simplifies making API requests that require CSRF token management and cookie handling.
 
-### **Features**
+### Features
 
 * **CSRF Token Handling**:
 
@@ -525,7 +519,7 @@ The `nuxt-sanctum-authentication` module equips you with a set of powerful compo
     * For more advanced usage, refer to the [ofetch documentation](https://github.com/unjs/ofetch?tab=readme-ov-file#%EF%B8%8F-create-fetch-with-default-options).
 
 
-### **Base URL Configuration**
+### Base URL Configuration
 
 All requests made with `useSanctumFetch()` will be sent to the `apiUrl` specified in your module's configuration. This ensures that all API calls are correctly routed to your Laravel backend.
 
@@ -533,11 +527,9 @@ All requests made with `useSanctumFetch()` will be sent to the `apiUrl` specifie
 
 ## `useSanctumOptions()`
 
-### **Purpose**
-
 `useSanctumOptions()` provides direct access to the module's configuration settings. It is a convenient alternative to using Nuxt 3's `useRuntimeConfig()` to retrieve configuration values.
 
-### **Features**
+### Features
 
 * **Quick Configuration Access**:
 
@@ -548,7 +540,7 @@ All requests made with `useSanctumFetch()` will be sent to the `apiUrl` specifie
         ```javascript
         const options = useSanctumOptions();
 
-        console.log(options.apiUrl); // Outputs runtimeConfig.public.sanctumAuth.apiUrl
+        console.log(options.apiUrl); // Outputs runtimeConfig.public.laravelSanctum.apiUrl
         ```
 
 * **Centralized Configuration Management**:
@@ -559,8 +551,6 @@ All requests made with `useSanctumFetch()` will be sent to the `apiUrl` specifie
 ---
 
 ## `useTokenStorage()`
-
-### **Purpose**
 
 `useTokenStorage()` is a specialized composable for managing authentication tokens, particularly in applications using token-based authentication (`authMode: 'token'`).
 
@@ -597,15 +587,13 @@ All requests made with `useSanctumFetch()` will be sent to the `apiUrl` specifie
 
 ---
 
-# **Middleware**
+# Middleware
 
 To help you manage access control in your Nuxt 3 application, the `nuxt-sanctum-authentication` module includes two built-in middleware. These middlewares are essential for securing pages that should be restricted based on the user's authentication status, ensuring that only authorized users can access certain areas of your application.
 
-## **Available Middlewares**
+## Available Middlewares
 
 ### `$auth` Middleware
-
-#### **Purpose**
 
 The `$auth` middleware is designed to protect pages that require a user to be authenticated. When applied to a route, it checks whether the user is currently logged in. If the user is not authenticated, they will be redirected to a specified login page or another route defined in your application.
 
@@ -623,8 +611,6 @@ This ensures that only authenticated users can access the page. If an unauthenti
 
 ### `$guest` Middleware
 
-#### **Purpose**
-
 The `$guest` middleware is intended for pages that should only be accessible to guest users—those who are not logged in. This is particularly useful for routes like login or registration pages, where you don't want authenticated users to have access.
 
 #### **Usage Example**
@@ -639,19 +625,19 @@ definePageMeta({
 
 When an authenticated user attempts to access a page protected by `$guest`, they will be redirected to another page, typically the home page or a dashboard.
 
-## **Customizing Middleware Names**
+## Customizing Middleware Names
 
 The default names for these middlewares are `$auth` and `$guest`, but you have the flexibility to rename them to suit your project's conventions or preferences. This can be done through the module's configuration settings.
 
-### **How to Rename Middlewares**
+### How to Rename Middlewares
 
-To rename the `$auth` and `$guest` middlewares, you can specify new names in the `middlewareNames` option within the `sanctumAuth` configuration in your `nuxt.config.ts` or `nuxt.config.js` file. Here's how you can do it:
+To rename the `$auth` and `$guest` middlewares, you can specify new names in the `middlewareNames` option within the `laravelSanctum` configuration in your `nuxt.config.ts` or `nuxt.config.js` file. Here's how you can do it:
 
 ```javascript
 export default defineNuxtConfig({
     modules: ['nuxt-sanctum-authentication'],
 
-    sanctumAuth: {
+    laravelSanctum: {
         apiUrl: 'http://laravel-api.test',  // Your Laravel API base URL
 
         middlewareNames: {
@@ -664,13 +650,13 @@ export default defineNuxtConfig({
 
 In this example, you can replace `'$auth'` and `'$guest'` with any other names you prefer. Once renamed, you will need to use the new names in your page components or route configurations.
 
-### **Example with Custom Middleware Names**
+### Example with Custom Middleware Names
 
 ```javascript
 export default defineNuxtConfig({
     modules: ['nuxt-sanctum-authentication'],
 
-    sanctumAuth: {
+    laravelSanctum: {
         apiUrl: 'http://laravel-api.test',
 
         middlewareNames: {
@@ -699,13 +685,13 @@ By leveraging these middlewares, you can effectively manage user access to diffe
 
 ---
 
-# **Error Handling**
+# Error Handling
 
 While the `nuxt-sanctum-authentication` module focuses on providing a secure authentication layer and a configured API client, it does not include built-in error handling for API responses. However, here are some useful tips for managing errors effectively.
 
 When your Laravel backend returns an error (such as *403, 404, 500,* etc.), the module will throw it as an exception, typically of the generic `Error` type.
 
-### **Checking Error Types**
+### Checking Error Types
 
 To determine the specific type of error you've encountered, you can use the following approach:
 
@@ -735,11 +721,11 @@ async function onCredentialsFormSubmit() {
 
 This method is useful, but it can become cumbersome, especially when dealing with validation errors across multiple forms and components.
 
-## **Contributing**
+## Contributing
 
 Contributions to the `nuxt-sanctum-authentication` module are welcome! Whether it's bug fixes, feature enhancements, or documentation improvements, feel free to submit a pull request.
 
-### **Development Setup**
+### Development Setup
 
 1. Fork the repository.
 2. Clone your forked repository.
@@ -750,6 +736,6 @@ Contributions to the `nuxt-sanctum-authentication` module are welcome! Whether i
 
 ---
 
-## **License**
+## License
 
 The `nuxt-sanctum-authentication` module is open-source software licensed under the MIT license.
