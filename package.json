@@ -1,6 +1,6 @@
 {
   "name": "@qirolab/nuxt-sanctum-authentication",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Nuxt 3 module for easy Laravel Sanctum authentication, offering CSRF token management, both cookie and token-based auth, and SSR compatibility.",
   "keywords": [
     "auth",

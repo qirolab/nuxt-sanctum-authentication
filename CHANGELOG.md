@@ -4,6 +4,18 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.5
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.4...v0.1.5)
+
+### 💅 Refactors
+
+- Rename config key ([3d28b08](https://github.com/qirolab/nuxt-sanctum-authentication/commit/3d28b08))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.4
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.3...v0.1.4)
