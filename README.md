@@ -3,7 +3,7 @@
 [![npm version][npm-version-src]][npm-version-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
-<!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
 
 <!-- Badges -->
 
@@ -41,9 +41,15 @@ authentication regardless of how your app is rendered.
 
 For full documentation, including setup instructions and API reference, visit the **[Nuxt Sanctum Authentication Documentation](https://qirolab.github.io/nuxt-sanctum-authentication/)**.
 
-<!-- ## Video Tutorial
+## Video Tutorial
 
-Watch the step-by-step guide on how to use the `nuxt-sanctum-authentication` module in this [Video Tutorial](#). -->
+Watch the step-by-step guide on how to use the `nuxt-sanctum-authentication` module in this **[Video Tutorial](https://www.youtube.com/watch?v=CLjd0_o67OA)**.
+
+## Demo Repository
+
+To explore the source code, check out the **[Nuxt Sanctum Authentication Demo Repository](https://github.com/qirolab/nuxt-sanctum-authentication-demo)**.
+- For **Cookie-Based SPA Authentication**, see the `main` branch.
+- For **API Token Authentication**, check out the `api-token-authentication` branch.
 
 
 ## Contributing
