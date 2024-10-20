@@ -1,38 +1,55 @@
 <script lang="ts" setup>
-import { FetchError } from 'ofetch';
-
 definePageMeta({
   middleware: ['$auth'],
 });
 
 const { user, refreshUser } = useSanctum<{ name: string; email: string }>();
 
-const form = ref({
+// const form = ref({
+//   name: '',
+//   email: '',
+// });
+
+const form = useSanctumForm<{
+  name: string;
+  email: string;
+  avatar: File | null;
+}>('post', '/api/profile', {
   name: '',
   email: '',
+  avatar: null,
 });
-
-const errors = ref<{ [key: string]: string[] }>({});
-
+// const errors = ref<{ [key: string]: string[] }>({});
+interface User {
+  name: string;
+  email: string;
+}
 async function submit() {
+  console.log(form.data());
+
   try {
-    await useSanctumFetch('/api/profile', {
-      method: 'post',
-      body: form.value,
-    });
+    await form.submit<User>();
+    // await useSanctumFetch('/api/profile', {
+    //   method: 'post',
+    //   body: form.data(),
+    // });
 
     await refreshUser();
   } catch (error) {
-    if (error instanceof FetchError && error.response?.status === 422) {
-      errors.value = error.response?._data.errors;
-      console.log(error.response?._data.errors);
-    }
+    // if (error instanceof FetchError && error.response?.status === 422) {
+    //   errors.value = error.response?._data.errors;
+    //   console.log(error.response?._data.errors);
+    // }
   }
 }
 
 onMounted(() => {
-  form.value.name = user.value!.name;
-  form.value.email = user.value!.email;
+  form.setData({
+    name: user.value!.name,
+    email: user.value!.email,
+  });
+  // form.value.name = user.value!.name;
+  // form.value.email = user.value!.email;
 });
 </script>
 
@@ -44,17 +61,51 @@ onMounted(() => {
     <div class="profile-form">
       <h1 class="heading">Profile</h1>
       <pre>{{ user }}</pre>
+      <pre>{{ form.errors }}</pre>
+      <pre>Has Error:{{ form.hasErrors }}</pre>
+
       <div>
         <label for="name">Name</label>
-        <input id="name" v-model="form.name" type="text" />
-        <span v-if="errors.name">{{ errors.name[0] }}</span>
+        <input
+          id="avatar"
+          type="file"
+          @change="
+            (e) => {
+              const target = e.target as HTMLInputElement;
+              if (target.files) {
+                form.avatar = target.files[0];
+              }
+
+              form.forgetError('avatar');
+            }
+          "
+        />
+        {{ form.avatar }}
+        <span v-if="form.invalid('avatar')">{{ form.errors.avatar }}</span>
+      </div>
+      <div>
+        <label for="name">Name</label>
+        <input
+          id="name"
+          v-model="form.name"
+          type="text"
+          @blur="form.forgetError('name')"
+        />
+        {{ form.name }}
+        <span v-if="form.invalid('name')">{{ form.errors.name }}</span>
       </div>
       <div>
         <label for="email">Email</label>
-        <input id="email" v-model="form.email" type="text" />
-        <span v-if="errors.email">{{ errors.email[0] }}</span>
+        <input
+          id="email"
+          v-model="form.email"
+          type="text"
+          @blur="form.forgetError('email')"
+        />
+        {{ form.email }}
+        <span v-if="form.invalid('email')">{{ form.errors.email }}</span>
       </div>
-      <button type="submit">Save</button>
+      <button type="submit">Save {{ form.processing }}</button>
     </div>
   </form>
 </template>
