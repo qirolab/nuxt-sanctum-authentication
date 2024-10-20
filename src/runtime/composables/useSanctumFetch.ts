@@ -17,20 +17,19 @@ export const useSanctumFetch = <T = any, R extends ResponseType = 'json'>(
   // const { $sanctumFetch } = useNuxtApp();
   // return ($sanctumFetch as $Fetch)<T, R>(request, options);
 
-  const moduleOptions = useSanctumOptions();
-  const logger = createLogger(moduleOptions.logLevel);
-  const serviceOptions: FetchOptions = {};
+  const { logLevel } = useSanctumOptions();
+  const logger = createLogger(logLevel);
 
-  if (options?.onRequest) {
-    serviceOptions['onRequest'] = options.onRequest;
-    delete options.onRequest;
-  }
-  if (options?.onResponseError) {
-    serviceOptions['onResponseError'] = options.onResponseError;
-    delete options.onResponseError;
-  }
+  // Extract onRequest and onResponseError from options
+  const { onRequest, onResponseError, ...otherOptions } = options || {};
 
-  const fetchService: $Fetch = createFetchService(serviceOptions, logger);
+  // Pass only the necessary options to the fetch service
+  const fetchServiceOptions: FetchOptions = {
+    ...(onRequest && { onRequest }),
+    ...(onResponseError && { onResponseError }),
+  };
 
-  return fetchService(request, options);
+  const fetchService: $Fetch = createFetchService(fetchServiceOptions, logger);
+
+  return fetchService(request, otherOptions);
 };
