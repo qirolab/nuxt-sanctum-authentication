@@ -9,7 +9,7 @@ export default defineNuxtPlugin(async () => {
   const options = useSanctumOptions();
   const user = useCurrentUser();
   const logger = createLogger(options.logLevel);
-  const fetchService: $Fetch = createFetchService(logger);
+  const fetchService: $Fetch = createFetchService({}, logger);
 
   if (!user.value) {
     try {
