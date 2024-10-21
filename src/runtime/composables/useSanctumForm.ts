@@ -28,9 +28,21 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     return typeof name !== 'string' ? name.target.name : name;
   };
 
-  function toValidationErrors<Data extends Record<string, unknown>>(
+  // const toSimpleValidationErrors = (
+  //  errors: Partial<Record<keyof Data, string | string[]>>,
+  // ): Partial<Record<keyof Data, string>> => {
+  //   return Object.keys(errors).reduce(
+  //     (carry, key) => ({
+  //       ...carry,
+  //       [key]: Array.isArray(errors[key]) ? errors[key][0] : errors[key],
+  //     }),
+  //     {},
+  //   );
+  // };
+
+  function toValidationErrors(
     errors: Partial<Record<keyof Data, string | string[]>>,
-  ): Partial<Record<keyof Data, string>> {
+  ): Partial<Record<keyof Data, string[]>> {
     return Object.keys(errors).reduce(
       (carry, key) => ({
         ...carry,
