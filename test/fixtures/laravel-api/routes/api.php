@@ -23,7 +23,7 @@ Route::post('/profile', function (Request $request) {
 
     $path = null;
     if ($request->hasFile('avatar')) {
-        $path = $request->file('avatar')->store('avatars');
+        $path = $request->file('avatar')->store('avatars', 'public');
     }
 
     $request->user()->update([...$request->only('name', 'email'), 'avatar' => $path]);
