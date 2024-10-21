@@ -28,4 +28,5 @@ export interface Form<Data extends Record<string, unknown>> {
   ): Data & Form<Data>;
   invalid(name: keyof Data): boolean;
   forgetError(string: keyof Data | NamedInputEvent): Data & Form<Data>;
+  reset(...keys: (keyof Partial<Data>)[]): Data & Form<Data>;
 }
