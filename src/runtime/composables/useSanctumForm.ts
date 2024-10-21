@@ -6,6 +6,72 @@ import type { Form, NamedInputEvent, RequestMethod } from '../types';
 import { hasFile } from '../helpers/has-file';
 import { useSanctumFetch } from './useSanctumFetch';
 
+/**
+ * Utility function to resolve an input's name attribute.
+ */
+const resolveName = (name: string | NamedInputEvent): string =>
+  typeof name !== 'string' ? name.target.name : name;
+
+/**
+ * Converts complex validation errors into simple validation messages.
+ */
+const toSimpleValidationErrors = <Data extends Record<string, unknown>>(
+  errors: Partial<Record<keyof Data, string | string[]>>,
+): Partial<Record<keyof Data, string>> =>
+  (Object.keys(errors) as (keyof Data)[]).reduce(
+    (carry, key) => {
+      carry[key] = Array.isArray(errors[key])
+        ? errors[key]![0]
+        : (errors[key] as string);
+      return carry;
+    },
+    {} as Partial<Record<keyof Data, string>>,
+  );
+
+/**
+ * Resolves the URL or function returning the URL.
+ */
+const resolveUrl = (url: string | (() => string)): string =>
+  typeof url === 'string' ? url : url();
+
+/**
+ * Resolves the request method (GET, POST, etc.) or function returning the method.
+ */
+const resolveMethod = (
+  method: RequestMethod | (() => RequestMethod),
+): RequestMethod =>
+  typeof method === 'string'
+    ? (method.toLowerCase() as RequestMethod)
+    : method();
+
+/**
+ * Resolves the options used in the fetch request, including hooks for request/response lifecycle.
+ */
+const resolveSubmitOptions = (
+  form: Form<any>,
+  options: FetchOptions,
+): FetchOptions => ({
+  ...options,
+  async onRequest(context) {
+    form.processing = true;
+    form.setErrors({});
+    options.onRequest?.(context);
+  },
+  async onResponse(context) {
+    form.processing = false;
+    options.onResponse?.(context);
+  },
+  async onResponseError(context) {
+    if (context.response.status === 422) {
+      form.setErrors(context.response._data.errors);
+    }
+    options.onResponseError?.(context);
+  },
+});
+
+/**
+ * Creates a form instance that supports reactive input handling, validation, and file uploads.
+ */
 export const useSanctumForm = <Data extends Record<string, unknown>>(
   method: RequestMethod | (() => RequestMethod),
   url: string | (() => string),
@@ -19,88 +85,19 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
   /**
    * The original input names.
    */
-  const originalInputs: (keyof Data)[] = Object.keys(originalData);
+  const originalInputs = Object.keys(originalData) as (keyof Data)[];
 
   /**
-   * Resolve the input's "name" attribute.
-   */
-  const resolveName = (name: string | NamedInputEvent): string => {
-    return typeof name !== 'string' ? name.target.name : name;
-  };
-
-  const toSimpleValidationErrors = (
-    errors: Partial<Record<keyof Data, string | string[]>>,
-  ): Partial<Record<keyof Data, string>> => {
-    return Object.keys(errors).reduce(
-      (carry, key) => ({
-        ...carry,
-        [key]: Array.isArray(errors[key]) ? errors[key][0] : errors[key],
-      }),
-      {},
-    );
-  };
-
-  // function toValidationErrors(
-  //   errors: Partial<Record<keyof Data, string | string[]>>,
-  // ): Partial<Record<keyof Data, string[]>> {
-  //   return Object.keys(errors).reduce(
-  //     (carry, key) => ({
-  //       ...carry,
-  //       [key]: typeof errors[key] === 'string' ? [errors[key]] : errors[key],
-  //     }),
-  //     {},
-  //   );
-  // }
-
-  const resolveUrl = (url: string | (() => string)): string =>
-    typeof url === 'string' ? url : url();
-
-  const resolveMethod = (
-    method: RequestMethod | (() => RequestMethod),
-  ): RequestMethod =>
-    typeof method === 'string'
-      ? (method.toLowerCase() as RequestMethod)
-      : method();
-
-  const resolveSubmitOptions = (options: FetchOptions): FetchOptions => {
-    return {
-      ...options,
-      async onRequest(context) {
-        form.processing = true;
-        form.setErrors({});
-        if (options.onRequest) {
-          options.onRequest(context);
-        }
-      },
-      async onResponse(context) {
-        form.processing = false;
-        if (options.onResponse) {
-          options.onResponse(context);
-        }
-      },
-      async onResponseError(context) {
-        if (context.response.status === 422) {
-          form.setErrors(context.response._data.errors);
-        }
-
-        if (options.onResponseError) {
-          options.onResponseError(context);
-        }
-      },
-    };
-  };
-
-  /**
-   * Create a new form instance.
+   * The form object containing data, validation, submission, and utility methods.
    */
   let form: Data & Form<Data> = {
     ...cloneDeep(originalData),
     data() {
-      const data = cloneDeep(toRaw(form));
+      const rawData = cloneDeep(toRaw(form));
       return originalInputs.reduce<Partial<Data>>(
         (carry, name) => ({
           ...carry,
-          [name]: data[name],
+          [name]: rawData[name],
         }),
         {},
       ) as Data;
@@ -114,21 +111,20 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
       return form;
     },
     processing: false,
-    submit: async <T = any, R extends ResponseType = 'json'>(
+    async submit<T = any, R extends ResponseType = 'json'>(
       options: FetchOptions<R> = {},
-    ): Promise<MappedResponseType<R, T>> => {
+    ): Promise<MappedResponseType<R, T>> {
       let methodType = resolveMethod(method);
       let preparedData: Data | FormData = form.data();
 
+      // Convert to FormData if files are detected
       if (hasFile(preparedData)) {
         preparedData = objectToFormData(preparedData, {
           indices: true,
           booleansAsIntegers: true,
         });
 
-        // Form Method Spoofing is needed to send files using PUT/PATCH/DELETE.
-        // https://laravel.com/docs/routing#form-method-spoofing
-        // https://github.com/laravel/framework/issues/13457
+        // Method spoofing for file uploads with non-POST methods
         if (methodType !== 'post') {
           preparedData.append('_method', methodType);
           methodType = 'post';
@@ -138,27 +134,26 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
       return useSanctumFetch(resolveUrl(url), {
         method: methodType,
         body: preparedData,
-        ...resolveSubmitOptions(options),
+        ...resolveSubmitOptions(form, options),
       });
     },
     errors: {},
     hasErrors: false,
     setErrors(value) {
-      const prepared = toSimpleValidationErrors(value);
-      if (!isEqual(form.errors, prepared)) {
-        form.errors = prepared;
+      const preparedErrors = toSimpleValidationErrors(value);
+      if (!isEqual(form.errors, preparedErrors)) {
+        form.errors = preparedErrors;
       }
       return form;
     },
-    forgetError(name: keyof Data | NamedInputEvent) {
+    forgetError(name) {
       const newErrors = { ...form.errors };
       Reflect.deleteProperty(newErrors, resolveName(name as string));
       form.setErrors(newErrors);
-
       return form;
     },
     invalid(name) {
-      return typeof form.errors[name] !== 'undefined';
+      return Boolean(form.errors[name]);
     },
     reset(...names) {
       const original = cloneDeep(originalData);
@@ -175,13 +170,14 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     },
   };
 
+  // Make the form reactive and watch for errors
   form = reactive(form) as Data & Form<Data>;
-
   watch(
     () => form.errors,
     () => {
       form.hasErrors = Object.keys(form.errors).length > 0;
     },
   );
+
   return form;
 };
