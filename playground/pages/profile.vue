@@ -54,9 +54,9 @@ function resetForm() {
             }
           "
         />
-        <span v-if="form.invalid('avatar')" class="text-danger">{{
-          form.errors.avatar
-        }}</span>
+        <span v-if="form.invalid('avatar')" class="text-danger">
+          {{ form.errors.avatar }}
+        </span>
       </div>
       <div>
         <label for="name">Name</label>
@@ -67,9 +67,9 @@ function resetForm() {
           :class="{ 'border-danger': form.invalid('name') }"
           @input="form.forgetError('name')"
         />
-        <span v-if="form.invalid('name')" class="text-danger">{{
-          form.errors.name
-        }}</span>
+        <span v-if="form.invalid('name')" class="text-danger">
+          {{ form.errors.name }}
+        </span>
       </div>
       <div>
         <label for="email">Email</label>
@@ -80,11 +80,11 @@ function resetForm() {
           :class="{ 'border-danger': form.invalid('email') }"
           @input="form.forgetError('email')"
         />
-        <span v-if="form.invalid('email')" class="text-danger">{{
-          form.errors.email
-        }}</span>
+        <span v-if="form.invalid('email')" class="text-danger">
+          {{ form.errors.email }}
+        </span>
       </div>
-      <button type="submit">{{ form.processing ? 'saving' : 'save' }}</button>
+      <button type="submit">{{ form.processing ? 'Saving' : 'Save' }}</button>
       <button type="button" @click="resetForm">Reset</button>
     </div>
   </form>
@@ -138,6 +138,6 @@ function resetForm() {
   color: red;
 }
 .border-danger {
-  border: 1px solid red;
+  border: 1px solid red !important;
 }
 </style>
