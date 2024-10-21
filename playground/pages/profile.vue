@@ -3,7 +3,11 @@ definePageMeta({
   middleware: ['$auth'],
 });
 
-const { user, refreshUser } = useSanctum<{ name: string; email: string }>();
+const { user, refreshUser } = useSanctum<{
+  name: string;
+  email: string;
+  avatar: string;
+}>();
 
 const form = useSanctumForm<{
   name: string;
@@ -35,7 +39,16 @@ function resetForm() {
 <template>
   <form @submit.prevent="submit">
     <div class="profile-form">
-      <h1 class="heading">Profile</h1>
+      <h1 v-if="user" class="heading">Profile: {{ user.name }}</h1>
+      <div
+        v-if="user && user.avatar"
+        style="display: flex; justify-content: center"
+      >
+        <img
+          :src="user.avatar"
+          style="width: 5rem; height: 5rem; border-radius: 9999px"
+        />
+      </div>
       <pre>{{ user }}</pre>
       <div>
         <label for="name">Name</label>
