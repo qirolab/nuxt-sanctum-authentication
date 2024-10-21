@@ -1,10 +1,10 @@
 import { serialize as objectToFormData } from 'object-to-formdata';
 import type { FetchOptions, MappedResponseType, ResponseType } from 'ofetch';
-import { cloneDeep, isEqual } from 'lodash-es';
+import { cloneDeep, isEqual, get, set } from 'lodash-es';
 import { reactive, toRaw, watch } from 'vue';
 import type { Form, NamedInputEvent, RequestMethod } from '../types';
 import { hasFile } from '../helpers/has-file';
-import { useSanctumFetch } from '#imports';
+import { useSanctumFetch } from './useSanctumFetch';
 
 export const useSanctumForm = <Data extends Record<string, unknown>>(
   method: RequestMethod | (() => RequestMethod),
@@ -145,9 +145,21 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
 
       return form;
     },
-
     invalid(name) {
       return typeof form.errors[name] !== 'undefined';
+    },
+    reset(...names) {
+      const original = cloneDeep(originalData);
+
+      if (names.length === 0) {
+        originalInputs.forEach((name) => {
+          (form[name] as Data[keyof Data]) = original[name];
+        });
+      } else {
+        names.forEach((name) => set(form, name, get(original, name)));
+      }
+
+      return form;
     },
   };
 
