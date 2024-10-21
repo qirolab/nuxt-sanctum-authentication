@@ -21,7 +21,7 @@ export interface Form<Data extends Record<string, unknown>> {
   submit<T = any, R extends ResponseType = 'json'>(
     options?: FetchOptions<R>,
   ): Promise<MappedResponseType<R, T>>;
-  errors: Partial<Record<keyof Data, string[]>>;
+  errors: Partial<Record<keyof Data, string>>;
   hasErrors: boolean;
   setErrors(
     errors: Partial<Record<keyof Data, string | string[]>>,
