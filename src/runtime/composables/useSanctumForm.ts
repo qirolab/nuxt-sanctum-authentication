@@ -28,29 +28,29 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     return typeof name !== 'string' ? name.target.name : name;
   };
 
-  // const toSimpleValidationErrors = (
-  //  errors: Partial<Record<keyof Data, string | string[]>>,
-  // ): Partial<Record<keyof Data, string>> => {
-  //   return Object.keys(errors).reduce(
-  //     (carry, key) => ({
-  //       ...carry,
-  //       [key]: Array.isArray(errors[key]) ? errors[key][0] : errors[key],
-  //     }),
-  //     {},
-  //   );
-  // };
-
-  function toValidationErrors(
+  const toSimpleValidationErrors = (
     errors: Partial<Record<keyof Data, string | string[]>>,
-  ): Partial<Record<keyof Data, string[]>> {
+  ): Partial<Record<keyof Data, string>> => {
     return Object.keys(errors).reduce(
       (carry, key) => ({
         ...carry,
-        [key]: typeof errors[key] === 'string' ? [errors[key]] : errors[key],
+        [key]: Array.isArray(errors[key]) ? errors[key][0] : errors[key],
       }),
       {},
     );
-  }
+  };
+
+  // function toValidationErrors(
+  //   errors: Partial<Record<keyof Data, string | string[]>>,
+  // ): Partial<Record<keyof Data, string[]>> {
+  //   return Object.keys(errors).reduce(
+  //     (carry, key) => ({
+  //       ...carry,
+  //       [key]: typeof errors[key] === 'string' ? [errors[key]] : errors[key],
+  //     }),
+  //     {},
+  //   );
+  // }
 
   const resolveUrl = (url: string | (() => string)): string =>
     typeof url === 'string' ? url : url();
@@ -144,7 +144,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     errors: {},
     hasErrors: false,
     setErrors(value) {
-      const prepared = toValidationErrors(value);
+      const prepared = toSimpleValidationErrors(value);
       if (!isEqual(form.errors, prepared)) {
         form.errors = prepared;
       }
