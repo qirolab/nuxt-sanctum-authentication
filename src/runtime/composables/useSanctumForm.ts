@@ -1,4 +1,4 @@
-import { serialize as objectToFormData } from 'object-to-formdata';
+import objectToFormData from 'object-to-formdata';
 import type { FetchOptions, MappedResponseType, ResponseType } from 'ofetch';
 import { cloneDeep, isEqual, get, set } from 'lodash-es';
 import { reactive, toRaw, watch } from 'vue';
@@ -119,7 +119,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
 
       // Convert to FormData if files are detected
       if (hasFile(preparedData)) {
-        preparedData = objectToFormData(preparedData, {
+        preparedData = objectToFormData.serialize(preparedData, {
           indices: true,
           booleansAsIntegers: true,
         });
