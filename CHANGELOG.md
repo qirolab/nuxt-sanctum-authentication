@@ -4,6 +4,18 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.9
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.8...v0.1.9)
+
+### 🚀 Enhancements
+
+- Add object-to-formdata dependency ([8709c5e](https://github.com/qirolab/nuxt-sanctum-authentication/commit/8709c5e))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.8
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.7...v0.1.8)
