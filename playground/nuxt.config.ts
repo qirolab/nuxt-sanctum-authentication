@@ -3,11 +3,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   devServer: {
-    host: 'laravel-api.test',
+    host: 'localhost',
   },
 
   laravelSanctum: {
-    apiUrl: 'http://laravel-api.test',
+    apiUrl: 'http://localhost:8000',
     authMode: 'cookie',
     userStateKey: 'sanctum.authenticated.user',
     token: {

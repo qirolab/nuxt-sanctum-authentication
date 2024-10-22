@@ -1,39 +1,36 @@
 <script lang="ts" setup>
-import { FetchError } from 'ofetch';
-
 definePageMeta({
   middleware: ['$auth'],
 });
 
-const { user, refreshUser } = useSanctum<{ name: string; email: string }>();
+const { user, refreshUser } = useSanctum<{
+  name: string;
+  email: string;
+  avatar: string;
+}>();
 
-const form = ref({
-  name: '',
-  email: '',
+const form = useSanctumForm<{
+  name: string;
+  email: string;
+  avatar: File | null;
+}>('post', '/api/profile', {
+  name: user.value!.name,
+  email: user.value!.email,
+  avatar: null,
 });
 
-const errors = ref<{ [key: string]: string[] }>({});
-
+interface User {
+  name: string;
+  email: string;
+}
 async function submit() {
-  try {
-    await useSanctumFetch('/api/profile', {
-      method: 'post',
-      body: form.value,
-    });
-
-    await refreshUser();
-  } catch (error) {
-    if (error instanceof FetchError && error.response?.status === 422) {
-      errors.value = error.response?._data.errors;
-      console.log(error.response?._data.errors);
-    }
-  }
+  await form.submit<User>();
+  await refreshUser();
 }
 
-onMounted(() => {
-  form.value.name = user.value!.name;
-  form.value.email = user.value!.email;
-});
+function resetForm() {
+  form.reset();
+}
 </script>
 
 <!-- eslint-disable vue/singleline-html-element-content-newline -->
@@ -42,19 +39,66 @@ onMounted(() => {
 <template>
   <form @submit.prevent="submit">
     <div class="profile-form">
-      <h1 class="heading">Profile</h1>
-      <pre>{{ user }}</pre>
+      <h1 v-if="user" class="heading">Profile: {{ user.name }}</h1>
+      <div
+        v-if="user && user.avatar"
+        style="display: flex; justify-content: center"
+      >
+        <img
+          :src="user.avatar"
+          style="width: 5rem; height: 5rem; border-radius: 9999px"
+        />
+      </div>
+      <!-- <pre>{{ user }}</pre> -->
+      <div>
+        <label for="avatar">Avatar</label>
+        <input
+          id="avatar"
+          type="file"
+          :class="{ 'border-danger': form.invalid('avatar') }"
+          @change="
+            (e) => {
+              const target = e.target as HTMLInputElement;
+              if (target.files) {
+                form.avatar = target.files[0];
+              }
+
+              form.forgetError('avatar');
+            }
+          "
+        />
+        <span v-if="form.invalid('avatar')" class="text-danger">
+          {{ form.errors.avatar }}
+        </span>
+      </div>
       <div>
         <label for="name">Name</label>
-        <input id="name" v-model="form.name" type="text" />
-        <span v-if="errors.name">{{ errors.name[0] }}</span>
+        <input
+          id="name"
+          v-model="form.name"
+          type="text"
+          :class="{ 'border-danger': form.invalid('name') }"
+          @input="form.forgetError('name')"
+        />
+        <span v-if="form.invalid('name')" class="text-danger">
+          {{ form.errors.name }}
+        </span>
       </div>
       <div>
         <label for="email">Email</label>
-        <input id="email" v-model="form.email" type="text" />
-        <span v-if="errors.email">{{ errors.email[0] }}</span>
+        <input
+          id="email"
+          v-model="form.email"
+          type="text"
+          :class="{ 'border-danger': form.invalid('email') }"
+          @input="form.forgetError('email')"
+        />
+        <span v-if="form.invalid('email')" class="text-danger">
+          {{ form.errors.email }}
+        </span>
       </div>
-      <button type="submit">Save</button>
+      <button type="submit">{{ form.processing ? 'Saving' : 'Save' }}</button>
+      <button type="button" @click="resetForm">Reset</button>
     </div>
   </form>
 </template>
@@ -101,5 +145,12 @@ onMounted(() => {
 
 .profile-form button:hover {
   background-color: #000;
+}
+
+.text-danger {
+  color: red;
+}
+.border-danger {
+  border: 1px solid red !important;
 }
 </style>

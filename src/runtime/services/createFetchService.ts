@@ -170,10 +170,14 @@ const getCredentialsMode = (): RequestCredentials | undefined => {
 /**
  * Create and configure a new fetch service instance with the Sanctum module's settings.
  *
+ * @param {FetchOptions} options
  * @param {ConsolaInstance} logger - The Consola logger instance for logging messages.
  * @returns {$Fetch} A configured fetch service instance ready for making API requests.
  */
-export default function createFetchService(logger: ConsolaInstance): $Fetch {
+export default function createFetchService(
+  options: FetchOptions,
+  logger: ConsolaInstance,
+): $Fetch {
   const config = useSanctumOptions();
 
   const httpOptions: FetchOptions = {
@@ -183,17 +187,25 @@ export default function createFetchService(logger: ConsolaInstance): $Fetch {
     retry: false,
 
     onRequest: async (context: FetchContext): Promise<void> => {
+      if (options.onRequest) {
+        await options.onRequest(context);
+      }
+
       await processRequestAuth(context, config, logger);
     },
 
-    onResponseError: async ({ response }): Promise<void> => {
-      if (response.status === 419) {
+    onResponseError: async (context): Promise<void> => {
+      if (context.response.status === 419) {
         logger.warn('CSRF token mismatch');
-      } else if (response.status === 401) {
+      } else if (context.response.status === 401) {
         const user = useCurrentUser();
         if (user.value !== null) {
           user.value = null;
         }
+      }
+
+      if (options.onResponseError) {
+        options.onResponseError(context);
       }
     },
   };

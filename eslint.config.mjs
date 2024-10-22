@@ -47,6 +47,7 @@ export default createConfigForNuxt({
         },
       },
     ],
+    '@stylistic/arrow-parens': 'off',
     'prettier/prettier': 'error',
   },
   settings: {
