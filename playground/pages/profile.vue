@@ -49,9 +49,9 @@ function resetForm() {
           style="width: 5rem; height: 5rem; border-radius: 9999px"
         />
       </div>
-      <pre>{{ user }}</pre>
+      <!-- <pre>{{ user }}</pre> -->
       <div>
-        <label for="name">Name</label>
+        <label for="avatar">Avatar</label>
         <input
           id="avatar"
           type="file"
