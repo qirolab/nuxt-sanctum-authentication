@@ -1,10 +1,11 @@
-import objectToFormData from 'object-to-formdata';
 import type { FetchOptions, MappedResponseType, ResponseType } from 'ofetch';
 import { cloneDeep, isEqual, get, set } from 'lodash-es';
 import { reactive, toRaw, watch } from 'vue';
-import type { Form, NamedInputEvent, RequestMethod } from '../types';
+import type { Form, NamedInputEvent, RequestMethod } from '../types/index';
 import { hasFile } from '../helpers/has-file';
 import { useSanctumFetch } from './useSanctumFetch';
+
+const objectToFormData = await import('object-to-formdata');
 
 /**
  * Utility function to resolve an input's name attribute.
