@@ -4,6 +4,30 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.10
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.9...v0.1.10)
+
+### 🚀 Enhancements
+
+- Add object-to-formdata helper ([1e2bcf4](https://github.com/qirolab/nuxt-sanctum-authentication/commit/1e2bcf4))
+- Add SanctumForm interface ([5a963b6](https://github.com/qirolab/nuxt-sanctum-authentication/commit/5a963b6))
+- Add objectToFormData helper to useSanctumForm ([a2b0197](https://github.com/qirolab/nuxt-sanctum-authentication/commit/a2b0197))
+
+### 🩹 Fixes
+
+- Remove object-to-formdata dependency ([c966a9b](https://github.com/qirolab/nuxt-sanctum-authentication/commit/c966a9b))
+- Make ModuleOptions properties required ([72bd80d](https://github.com/qirolab/nuxt-sanctum-authentication/commit/72bd80d))
+- Remove unnecessary cast ([27c9066](https://github.com/qirolab/nuxt-sanctum-authentication/commit/27c9066))
+
+### 🏡 Chore
+
+- **release:** V0.1.9 ([8cbbcb3](https://github.com/qirolab/nuxt-sanctum-authentication/commit/8cbbcb3))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.9
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.8...v0.1.9)
