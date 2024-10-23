@@ -58,6 +58,10 @@ const resolveSubmitOptions = (
     form.setErrors({});
     options.onRequest?.(context);
   },
+  async onRequestError(context) {
+    form.processing = false;
+    options.onRequestError?.(context);
+  },
   async onResponse(context) {
     form.processing = false;
     options.onResponse?.(context);
@@ -115,7 +119,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     async submit<T = any, R extends ResponseType = 'json'>(
       options: FetchOptions<R> = {},
     ): Promise<MappedResponseType<R, T>> {
-      let methodType = resolveMethod(method);
+      const methodType = resolveMethod(method);
       let preparedData: Data | FormData = form.data();
 
       // Convert to FormData if files are detected
@@ -124,12 +128,6 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
           indices: true,
           booleansAsIntegers: true,
         }) as FormData;
-
-        // Method spoofing for file uploads with non-POST methods
-        if (methodType !== 'post') {
-          preparedData.append('_method', methodType);
-          methodType = 'post';
-        }
       }
 
       return useSanctumFetch(resolveUrl(url), {

@@ -9,7 +9,7 @@ Route::get('/user', function (Request $request) {
     return UserResource::make($request->user());
 })->middleware('auth:sanctum');
 
-Route::post('/profile', function (Request $request) {
+Route::patch('/profile', function (Request $request) {
     $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'email'],
