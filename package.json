@@ -44,7 +44,7 @@
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish --access public && git push --follow-tags",
     "lint": "eslint . --ignore-pattern 'test/fixtures/laravel-api/*'",
-    "lint:fix": "eslint . --fix",
+    "lint:fix": "eslint . --fix --ignore-pattern 'test/fixtures/laravel-api/*'",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest watch",
