@@ -1,11 +1,11 @@
 import type { FetchOptions, MappedResponseType, ResponseType } from 'ofetch';
 import { cloneDeep, isEqual, get, set } from 'lodash-es';
 import { reactive, toRaw, watch } from 'vue';
-import type { Form, NamedInputEvent, RequestMethod } from '../types/index';
 import { hasFile } from '../helpers/has-file';
+import objectToFormData from '../helpers/object-to-formdata';
+import type { RequestMethod } from '../types/index';
+import type { NamedInputEvent, SanctumForm } from '../types/SanctumForm';
 import { useSanctumFetch } from './useSanctumFetch';
-
-const objectToFormData = await import('object-to-formdata');
 
 /**
  * Utility function to resolve an input's name attribute.
@@ -49,7 +49,7 @@ const resolveMethod = (
  * Resolves the options used in the fetch request, including hooks for request/response lifecycle.
  */
 const resolveSubmitOptions = (
-  form: Form<any>,
+  form: SanctumForm<any>,
   options: FetchOptions,
 ): FetchOptions => ({
   ...options,
@@ -77,7 +77,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
   method: RequestMethod | (() => RequestMethod),
   url: string | (() => string),
   inputs: Data,
-): Data & Form<Data> => {
+): Data & SanctumForm<Data> => {
   /**
    * The original data.
    */
@@ -91,7 +91,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
   /**
    * The form object containing data, validation, submission, and utility methods.
    */
-  let form: Data & Form<Data> = {
+  let form: Data & SanctumForm<Data> = {
     ...cloneDeep(originalData),
     data() {
       const rawData = cloneDeep(toRaw(form));
@@ -123,7 +123,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
         preparedData = objectToFormData.serialize(preparedData, {
           indices: true,
           booleansAsIntegers: true,
-        });
+        }) as FormData;
 
         // Method spoofing for file uploads with non-POST methods
         if (methodType !== 'post') {
@@ -172,7 +172,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
   };
 
   // Make the form reactive and watch for errors
-  form = reactive(form) as Data & Form<Data>;
+  form = reactive(form) as Data & SanctumForm<Data>;
   watch(
     () => form.errors,
     () => {
