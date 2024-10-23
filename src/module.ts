@@ -60,7 +60,7 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     const sanctumOptions = defu(
       _nuxt.options.runtimeConfig.public[MODULE_CONFIG_KEY] as any,
       _options,
-    ) as ModuleOptions;
+    );
     _nuxt.options.runtimeConfig.public[MODULE_CONFIG_KEY] = sanctumOptions;
 
     const logger = useLogger(MODULE_NAME, {
