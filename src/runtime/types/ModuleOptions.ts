@@ -10,7 +10,7 @@ export interface ModuleOptions {
    * The authentication mode.
    * @default 'cookie'
    */
-  authMode?: 'cookie' | 'token';
+  authMode: 'cookie' | 'token';
 
   /**
    * The current application URL for the Referrer header. (Optional)
@@ -38,7 +38,7 @@ export interface ModuleOptions {
      * The storage provider to use for the token.
      * @default 'cookie'
      */
-    provider?: 'cookie' | 'localStorage';
+    provider: 'cookie' | 'localStorage';
   };
 
   /**
@@ -113,28 +113,28 @@ export interface ModuleOptions {
      * If set to false, a 403 error is triggered.
      * @default '/login'
      */
-    loginPath: string | false;
+    loginPath: string;
 
     /**
      * URL to redirect to when guest access is required (user must not be authenticated).
      * If set to false, the plugin will throw an 403 error.
      * @default '/'
      */
-    guestOnlyRedirect: string | false;
+    guestOnlyRedirect: string;
 
     /**
      * URL to redirect to after a successful login.
      * If set to false, no redirection occurs.
      * @default '/'
      */
-    redirectToAfterLogin: string | false;
+    redirectToAfterLogin: string;
 
     /**
      * URL to redirect to after logout.
      * If set to false, no redirection occurs.
      * @default '/'
      */
-    redirectToAfterLogout: string | false;
+    redirectToAfterLogout: string;
   };
 
   middlewareNames: {
@@ -163,5 +163,5 @@ export interface ModuleOptions {
    *
    * @default 3
    */
-  logLevel?: number;
+  logLevel: number;
 }
