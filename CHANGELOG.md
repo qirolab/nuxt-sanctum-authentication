@@ -4,6 +4,27 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.11
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.10...v0.1.11)
+
+### 🚀 Enhancements
+
+- Update profile form to patch request ([6bbd206](https://github.com/qirolab/nuxt-sanctum-authentication/commit/6bbd206))
+- Add onRequestError callback to useSanctumForm ([ac396a6](https://github.com/qirolab/nuxt-sanctum-authentication/commit/ac396a6))
+
+### 🩹 Fixes
+
+- Update profile route to PATCH ([2a9ddad](https://github.com/qirolab/nuxt-sanctum-authentication/commit/2a9ddad))
+
+### 🎨 Styles
+
+- Ignore laravel-api fixtures in lint:fix ([2e090ca](https://github.com/qirolab/nuxt-sanctum-authentication/commit/2e090ca))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.10
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.9...v0.1.10)
