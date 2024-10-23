@@ -9,11 +9,13 @@ const { user, refreshUser } = useSanctum<{
   avatar: string;
 }>();
 
-const form = useSanctumForm<{
+interface UserProfileForm extends Record<string, unknown> {
   name: string;
   email: string;
   avatar: File | null;
-}>('post', '/api/profile', {
+}
+
+const form = useSanctumForm<UserProfileForm>('patch', '/api/profile', {
   name: user.value!.name,
   email: user.value!.email,
   avatar: null,
