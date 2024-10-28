@@ -1,7 +1,6 @@
+import type { ConsolaInstance } from 'consola';
 import type { $Fetch } from 'ofetch';
 import { useSanctumOptions } from '../composables/useSanctumOptions';
-import createFetchService from '../services/createFetchService';
-import { createLogger } from './createLogger';
 import { extractNestedValue } from './utilities';
 
 type ResponseType<T extends string | null> =
@@ -11,10 +10,11 @@ type ResponseType<T extends string | null> =
       ? Record<T, any>
       : any;
 
-export async function getAuthUser<T = any>(): Promise<T | null> {
+export async function getAuthUser<T = any>(
+  fetchService: $Fetch,
+  logger: ConsolaInstance,
+): Promise<T | null> {
   const options = useSanctumOptions();
-  const logger = createLogger(options.logLevel);
-  const fetchService: $Fetch = createFetchService({}, logger);
 
   const responseWrapper = options.userResponseWrapperKey || null;
 
