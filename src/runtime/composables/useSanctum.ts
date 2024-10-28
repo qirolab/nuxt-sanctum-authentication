@@ -1,4 +1,6 @@
 import { computed } from 'vue';
+import { extractNestedValue } from '../helpers/utilities';
+import { createLogger } from '../helpers/createLogger';
 import { useSanctumFetch } from './useSanctumFetch';
 import { useSanctumOptions } from './useSanctumOptions';
 import { useCurrentUser } from './useCurrentUser';
@@ -9,6 +11,7 @@ export const useSanctum = <T>() => {
   const nuxtApp = useNuxtApp();
   const options = useSanctumOptions();
   const user = useCurrentUser<T>();
+  const logger = createLogger(options.logLevel);
 
   const isLoggedIn = computed(() => {
     return user.value !== null;
@@ -37,20 +40,36 @@ export const useSanctum = <T>() => {
       return await navigateTo(redirect.redirectToAfterLogin);
     }
 
-    const response = await useSanctumFetch<{ token: string }>(
-      sanctumEndpoints.login,
-      {
-        method: 'post',
-        body: credentials,
-      },
-    );
+    type ResponseType<T extends string> = T extends `${infer Key}.${infer Rest}`
+      ? Record<Key, ResponseType<Rest>>
+      : Record<T, string>;
+
+    // Define `fetchResponse` type based on configurable response key, e.g., "data.token"
+    const fetchResponse = await useSanctumFetch<
+      ResponseType<typeof options.token.responseKey>
+    >(sanctumEndpoints.login, {
+      method: 'post',
+      body: credentials,
+    });
 
     // Handle token or cookie auth
     if (authMode === 'token') {
       const { token } = options;
-      const tokenValue = token.responseKey
-        .split('.')
-        .reduce((acc, key) => acc && acc[key], response);
+      const tokenValue = extractNestedValue<string>(
+        fetchResponse,
+        token.responseKey,
+      );
+
+      if (fetchResponse && !user) {
+        logger.warn(
+          'Token extraction failed.',
+          `Please verify your \`token.responseKey\` in the configuration.`,
+          `\nConfigured \`token.responseKey\`: ${token.responseKey}`,
+          `\nReceived API Response:`,
+          fetchResponse,
+        );
+      }
+
       await useTokenStorage(nuxtApp).set(tokenValue);
     }
 
