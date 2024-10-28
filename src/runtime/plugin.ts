@@ -3,6 +3,7 @@ import createFetchService from './services/createFetchService';
 import { useCurrentUser } from './composables/useCurrentUser';
 import { createLogger } from './helpers/createLogger';
 import { useSanctumOptions } from './composables/useSanctumOptions';
+import { getAuthUser } from './helpers/get-auth-user';
 import { defineNuxtPlugin } from '#app';
 
 export default defineNuxtPlugin(async () => {
@@ -13,7 +14,7 @@ export default defineNuxtPlugin(async () => {
 
   if (!user.value) {
     try {
-      user.value = await fetchService(options.sanctumEndpoints.user);
+      user.value = await getAuthUser(fetchService, logger);
     } catch (error) {
       console.debug(error);
     }
