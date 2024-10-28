@@ -38,7 +38,7 @@ const localStorageTokenProvider = {
 
 export function useTokenStorage(nuxtApp: NuxtApp): {
   get(): Promise<string | undefined>;
-  set(tokenData?: string): Promise<void>;
+  set(tokenData?: string | null): Promise<void>;
 } {
   const { token } = useSanctumOptions();
 
