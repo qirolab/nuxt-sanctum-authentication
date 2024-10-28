@@ -1,7 +1,6 @@
 import { computed } from 'vue';
 import { getAuthUser } from '../helpers/get-auth-user';
 import { extractNestedValue } from '../helpers/utilities';
-import { createLogger } from '../helpers/createLogger';
 import { useSanctumFetch } from './useSanctumFetch';
 import { useSanctumOptions } from './useSanctumOptions';
 import { useCurrentUser } from './useCurrentUser';
@@ -12,14 +11,18 @@ export const useSanctum = <T>() => {
   const nuxtApp = useNuxtApp();
   const options = useSanctumOptions();
   const user = useCurrentUser<T>();
-  const logger = createLogger(options.logLevel);
 
   const isLoggedIn = computed(() => {
     return user.value !== null;
   });
 
   async function refreshUser() {
-    user.value = await getAuthUser(useNuxtApp().$sanctumFetch, logger);
+    try {
+      user.value = await getAuthUser(useNuxtApp().$sanctumFetch);
+    } catch (error) {
+      user.value = null;
+      console.debug(error);
+    }
   }
 
   async function login(
@@ -60,16 +63,6 @@ export const useSanctum = <T>() => {
         fetchResponse,
         token.responseKey,
       );
-
-      if (fetchResponse && !user) {
-        logger.warn(
-          'Token extraction failed.',
-          `Please verify your \`token.responseKey\` in the configuration.`,
-          `\nConfigured \`token.responseKey\`: ${token.responseKey}`,
-          `\nReceived API Response:`,
-          fetchResponse,
-        );
-      }
 
       await useTokenStorage(nuxtApp).set(tokenValue);
     }
