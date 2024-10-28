@@ -14,9 +14,9 @@ export default defineNuxtPlugin(async () => {
 
   if (!user.value) {
     try {
-      user.value = await getAuthUser(fetchService, logger);
+      user.value = await getAuthUser(fetchService);
     } catch (error) {
-      console.debug(error);
+      logger.debug('Failed to fetch authenticated user:', error);
     }
   }
 
