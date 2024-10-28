@@ -1,4 +1,5 @@
 import { computed } from 'vue';
+import { getAuthUser } from '../helpers/get-auth-user';
 import { extractNestedValue } from '../helpers/utilities';
 import { createLogger } from '../helpers/createLogger';
 import { useSanctumFetch } from './useSanctumFetch';
@@ -18,7 +19,7 @@ export const useSanctum = <T>() => {
   });
 
   async function refreshUser() {
-    user.value = await useSanctumFetch<T>(options.sanctumEndpoints.user);
+    user.value = await getAuthUser(useNuxtApp().$sanctumFetch, logger);
   }
 
   async function login(
