@@ -35,6 +35,12 @@ export interface ModuleOptions {
     storageKey: string;
 
     /**
+     * The key present the token in the login response.
+     * @default 'token'
+     */
+    responseKey: string;
+
+    /**
      * The storage provider to use for the token.
      * @default 'cookie'
      */

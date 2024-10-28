@@ -47,7 +47,11 @@ export const useSanctum = <T>() => {
 
     // Handle token or cookie auth
     if (authMode === 'token') {
-      await useTokenStorage(nuxtApp).set(response.token);
+      const { token } = options;
+      const tokenValue = token.responseKey
+        .split('.')
+        .reduce((acc, key) => acc && acc[key], response);
+      await useTokenStorage(nuxtApp).set(tokenValue);
     }
 
     await refreshUser();

@@ -23,6 +23,7 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
     token: {
       storageKey: 'AUTH_TOKEN',
       provider: 'cookie',
+      responseKey: 'token',
     },
     fetchClientOptions: {
       retryAttempts: false,
