@@ -4,6 +4,20 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.13
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.12...v0.1.13)
+
+### 🩹 Fixes
+
+- Remove unnecessary try/catch block ([fddde74](https://github.com/qirolab/nuxt-sanctum-authentication/commit/fddde74))
+- Handle token extraction error silently ([79ff2ab](https://github.com/qirolab/nuxt-sanctum-authentication/commit/79ff2ab))
+- Log error when fetching authenticated user ([7f05734](https://github.com/qirolab/nuxt-sanctum-authentication/commit/7f05734))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.12
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.11...v0.1.12)
