@@ -35,7 +35,23 @@ export interface ModuleOptions {
     storageKey: string;
 
     /**
-     * The key present the token in the login response.
+     * This option specifies the key used to retrieve the authentication token
+     * from the response of the `sanctumEndpoints.login` API.
+     *
+     * By default, this key is set to `'token'`. If your API response uses a
+     * different key for the token, you can change this option to match it.
+     *
+     * For example, if your API response looks like this:
+     * ```
+     * {
+     *   "data": {
+     *     "auth_token": "your_token_here"
+     *   }
+     * }
+     * ```
+     * You would set `responseKey` to `'data.auth_token'` to access the token.
+     *
+     * @type {string}
      * @default 'token'
      */
     responseKey: string;
