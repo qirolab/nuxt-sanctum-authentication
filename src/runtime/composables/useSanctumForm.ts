@@ -45,6 +45,19 @@ const resolveMethod = (
     ? (method.toLowerCase() as RequestMethod)
     : method();
 
+type HookFunction<T> = (context: T) => void;
+
+const invokeHooks = <T>(
+  hooks: HookFunction<T> | HookFunction<T>[] | undefined,
+  context: T,
+): void => {
+  if (Array.isArray(hooks)) {
+    hooks.forEach((hook) => hook?.(context));
+  } else {
+    hooks?.(context);
+  }
+};
+
 /**
  * Resolves the options used in the fetch request, including hooks for request/response lifecycle.
  */
@@ -56,21 +69,21 @@ const resolveSubmitOptions = (
   async onRequest(context) {
     form.processing = true;
     form.setErrors({});
-    options.onRequest?.(context);
+    invokeHooks(options.onRequest, context);
   },
   async onRequestError(context) {
     form.processing = false;
-    options.onRequestError?.(context);
+    invokeHooks(options.onRequestError, context);
   },
   async onResponse(context) {
     form.processing = false;
-    options.onResponse?.(context);
+    invokeHooks(options.onResponse, context);
   },
   async onResponseError(context) {
     if (context.response.status === 422) {
       form.setErrors(context.response._data.errors);
     }
-    options.onResponseError?.(context);
+    invokeHooks(options.onResponseError, context);
   },
 });
 
@@ -117,7 +130,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     },
     processing: false,
     async submit<T = any, R extends ResponseType = 'json'>(
-      options: FetchOptions<R> = {},
+      options: FetchOptions<ResponseType> = {},
     ): Promise<MappedResponseType<R, T>> {
       const methodType = resolveMethod(method);
       let preparedData: Data | FormData = form.data();
@@ -130,11 +143,12 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
         }) as FormData;
       }
 
+      // Explicitly use ResponseType for fetch options
       return useSanctumFetch(resolveUrl(url), {
         method: methodType,
         body: preparedData,
-        ...resolveSubmitOptions(form, options),
-      });
+        ...resolveSubmitOptions(form, options as FetchOptions<ResponseType>),
+      }) as Promise<MappedResponseType<R, T>>;
     },
     errors: {},
     hasErrors: false,
