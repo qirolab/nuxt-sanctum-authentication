@@ -53,6 +53,12 @@ export interface ModuleOptions {
     storageKey: string;
 
     /**
+     * The storage provider to use for the token.
+     * @default 'cookie'
+     */
+    provider: 'cookie' | 'localStorage';
+
+    /**
      * This option specifies the key used to retrieve the authentication token
      * from the response of the `sanctumEndpoints.login` API.
      *
@@ -73,12 +79,6 @@ export interface ModuleOptions {
      * @default 'token'
      */
     responseKey: string;
-
-    /**
-     * The storage provider to use for the token.
-     * @default 'cookie'
-     */
-    provider: 'cookie' | 'localStorage';
   };
 
   /**
