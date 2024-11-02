@@ -23,11 +23,11 @@ export const useSanctumFetch = <T = any, R extends ResponseType = 'json'>(
   // Extract onRequest and onResponseError from options
   const { onRequest, onResponseError, ...otherOptions } = options || {};
 
-  // Pass only the necessary options to the fetch service
-  const fetchServiceOptions: FetchOptions = {
-    ...(onRequest && { onRequest }),
-    ...(onResponseError && { onResponseError }),
-  };
+  // Create an object of type FetchOptions
+  const fetchServiceOptions = {
+    ...(onRequest ? { onRequest } : {}),
+    ...(onResponseError ? { onResponseError } : {}),
+  } as FetchOptions<ResponseType>;
 
   const fetchService: $Fetch = createFetchService(fetchServiceOptions, logger);
 
