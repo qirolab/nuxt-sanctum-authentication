@@ -28,7 +28,7 @@ export interface SanctumForm<Data extends Record<string, unknown>> {
    * Submit the form data using the specified fetch options.
    */
   submit<T = any, R extends ResponseType = 'json'>(
-    options: FetchOptions<ResponseType>,
+    options?: FetchOptions<ResponseType>,
   ): Promise<MappedResponseType<R, T>>;
 
   /**
