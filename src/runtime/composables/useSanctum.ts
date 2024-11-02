@@ -1,4 +1,5 @@
 import { computed } from 'vue';
+import type { FetchOptions } from 'ofetch';
 import { getAuthUser } from '../helpers/get-auth-user';
 import { extractNestedValue } from '../helpers/utilities';
 import { useSanctumFetch } from './useSanctumFetch';
@@ -27,6 +28,7 @@ export const useSanctum = <T>() => {
 
   async function login(
     credentials: Record<string, any>,
+    clientOptions: FetchOptions = {},
     callback?: (user: T | null) => any,
   ) {
     const { redirect, authMode, sanctumEndpoints } = options;
@@ -54,6 +56,7 @@ export const useSanctum = <T>() => {
     >(sanctumEndpoints.login, {
       method: 'post',
       body: credentials,
+      ...(clientOptions as object),
     });
 
     // Handle token or cookie auth
