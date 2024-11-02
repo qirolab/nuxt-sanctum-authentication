@@ -63,27 +63,35 @@ const invokeHooks = <T>(
  */
 const resolveSubmitOptions = (
   form: SanctumForm<any>,
-  options: FetchOptions,
+  options: FetchOptions = {} as FetchOptions, // Ensures `options` defaults to FetchOptions type
 ): FetchOptions => ({
   ...options,
   async onRequest(context) {
     form.processing = true;
     form.setErrors({});
-    invokeHooks(options.onRequest, context);
+    if ('onRequest' in options && options.onRequest) {
+      invokeHooks(options.onRequest, context);
+    }
   },
   async onRequestError(context) {
     form.processing = false;
-    invokeHooks(options.onRequestError, context);
+    if ('onRequestError' in options && options.onRequestError) {
+      invokeHooks(options.onRequestError, context);
+    }
   },
   async onResponse(context) {
     form.processing = false;
-    invokeHooks(options.onResponse, context);
+    if ('onResponse' in options && options.onResponse) {
+      invokeHooks(options.onResponse, context);
+    }
   },
   async onResponseError(context) {
     if (context.response.status === 422) {
       form.setErrors(context.response._data.errors);
     }
-    invokeHooks(options.onResponseError, context);
+    if ('onResponseError' in options && options.onResponseError) {
+      invokeHooks(options.onResponseError, context);
+    }
   },
 });
 
@@ -130,7 +138,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
     },
     processing: false,
     async submit<T = any, R extends ResponseType = 'json'>(
-      options: FetchOptions<ResponseType> = {},
+      options?: FetchOptions<ResponseType>,
     ): Promise<MappedResponseType<R, T>> {
       const methodType = resolveMethod(method);
       let preparedData: Data | FormData = form.data();
@@ -147,7 +155,7 @@ export const useSanctumForm = <Data extends Record<string, unknown>>(
       return useSanctumFetch(resolveUrl(url), {
         method: methodType,
         body: preparedData,
-        ...resolveSubmitOptions(form, options as FetchOptions<ResponseType>),
+        ...resolveSubmitOptions(form, options),
       }) as Promise<MappedResponseType<R, T>>;
     },
     errors: {},
