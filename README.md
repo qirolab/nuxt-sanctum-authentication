@@ -14,7 +14,7 @@
 [license-src]: https://img.shields.io/npm/l/@qirolab/nuxt-sanctum-authentication.svg?style=flat&colorA=18181B&colorB=28CF8D
 [license-href]: https://npmjs.com/package/@qirolab/nuxt-sanctum-authentication
 [nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
-[nuxt-href]: https://nuxt.com
+[nuxt-href]: https://nuxt.com/modules/nuxt-sanctum-authentication
 
 
 ## **Introduction**
@@ -66,7 +66,7 @@ Contributions to the `nuxt-sanctum-authentication` module are welcome! Whether i
 6. Submit a pull request.
 
 
-## Support
+## Support my work
 
 If you found this demo helpful and want to support my work, check out some of my other products:
 

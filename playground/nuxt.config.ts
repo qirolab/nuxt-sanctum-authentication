@@ -10,9 +10,13 @@ export default defineNuxtConfig({
     apiUrl: 'http://localhost:8000',
     authMode: 'cookie',
     userStateKey: 'sanctum.authenticated.user',
+    userResponseWrapperKey: 'data',
+
     token: {
       storageKey: 'AUTH_TOKEN',
       provider: 'cookie',
+      // responseKey: 'data.token',
+      responseKey: 'token',
     },
     fetchClientOptions: {
       retryAttempts: false,
@@ -24,9 +28,9 @@ export default defineNuxtConfig({
     sanctumEndpoints: {
       csrf: '/sanctum/csrf-cookie',
       login: '/login',
-      // login: '/api/sanctum/token',
+      // login: '/api/tokens/create',
       logout: '/logout',
-      // logout: '/api/sanctum/token/delete',
+      // logout: '/api/tokens/delete',
       user: '/api/user',
     },
     redirect: {

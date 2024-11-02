@@ -1,4 +1,7 @@
 import { computed } from 'vue';
+import type { FetchOptions } from 'ofetch';
+import { getAuthUser } from '../helpers/get-auth-user';
+import { extractNestedValue } from '../helpers/utilities';
 import { useSanctumFetch } from './useSanctumFetch';
 import { useSanctumOptions } from './useSanctumOptions';
 import { useCurrentUser } from './useCurrentUser';
@@ -15,11 +18,17 @@ export const useSanctum = <T>() => {
   });
 
   async function refreshUser() {
-    user.value = await useSanctumFetch<T>(options.sanctumEndpoints.user);
+    try {
+      user.value = await getAuthUser(useNuxtApp().$sanctumFetch);
+    } catch (error) {
+      user.value = null;
+      console.debug(error);
+    }
   }
 
   async function login(
     credentials: Record<string, any>,
+    clientOptions: FetchOptions = {},
     callback?: (user: T | null) => any,
   ) {
     const { redirect, authMode, sanctumEndpoints } = options;
@@ -37,17 +46,28 @@ export const useSanctum = <T>() => {
       return await navigateTo(redirect.redirectToAfterLogin);
     }
 
-    const response = await useSanctumFetch<{ token: string }>(
-      sanctumEndpoints.login,
-      {
-        method: 'post',
-        body: credentials,
-      },
-    );
+    type ResponseType<T extends string> = T extends `${infer Key}.${infer Rest}`
+      ? Record<Key, ResponseType<Rest>>
+      : Record<T, string>;
+
+    // Define `fetchResponse` type based on configurable response key, e.g., "data.token"
+    const fetchResponse = await useSanctumFetch<
+      ResponseType<typeof options.token.responseKey>
+    >(sanctumEndpoints.login, {
+      method: 'post',
+      body: credentials,
+      ...(clientOptions as object),
+    });
 
     // Handle token or cookie auth
     if (authMode === 'token') {
-      await useTokenStorage(nuxtApp).set(response.token);
+      const { token } = options;
+      const tokenValue = extractNestedValue<string>(
+        fetchResponse,
+        token.responseKey,
+      );
+
+      await useTokenStorage(nuxtApp).set(tokenValue);
     }
 
     await refreshUser();

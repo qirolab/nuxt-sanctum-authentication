@@ -25,6 +25,24 @@ export interface ModuleOptions {
   userStateKey: string;
 
   /**
+   * This option lets you specify the key used to find user data in the response
+   * from the `sanctumEndpoints.user` API.
+   *
+   * For example:
+   * - If the API response looks like `{ data: { ... } }`, you should set
+   *   `userResponseWrapperKey` to `'data'` to access the user information.
+   *
+   * - If the response is `{ data: { user: { ... } } }`, then use
+   *   `userResponseWrapperKey` as `'data.user'` to get the user object.
+   *
+   * This makes it easy to work with different formats of API responses.
+   *
+   * @type {null | string}
+   * @default null
+   */
+  userResponseWrapperKey?: null | string;
+
+  /**
    * The token specific options.
    */
   token: {
@@ -39,6 +57,28 @@ export interface ModuleOptions {
      * @default 'cookie'
      */
     provider: 'cookie' | 'localStorage';
+
+    /**
+     * This option specifies the key used to retrieve the authentication token
+     * from the response of the `sanctumEndpoints.login` API.
+     *
+     * By default, this key is set to `'token'`. If your API response uses a
+     * different key for the token, you can change this option to match it.
+     *
+     * For example, if your API response looks like this:
+     * ```
+     * {
+     *   "data": {
+     *     "auth_token": "your_token_here"
+     *   }
+     * }
+     * ```
+     * You would set `responseKey` to `'data.auth_token'` to access the token.
+     *
+     * @type {string}
+     * @default 'token'
+     */
+    responseKey: string;
   };
 
   /**

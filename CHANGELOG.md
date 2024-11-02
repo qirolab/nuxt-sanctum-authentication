@@ -4,6 +4,51 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.13
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.12...v0.1.13)
+
+### 🩹 Fixes
+
+- Remove unnecessary try/catch block ([fddde74](https://github.com/qirolab/nuxt-sanctum-authentication/commit/fddde74))
+- Handle token extraction error silently ([79ff2ab](https://github.com/qirolab/nuxt-sanctum-authentication/commit/79ff2ab))
+- Log error when fetching authenticated user ([7f05734](https://github.com/qirolab/nuxt-sanctum-authentication/commit/7f05734))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
+## v0.1.12
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.11...v0.1.12)
+
+### 🚀 Enhancements
+
+- Add extractNestedValue utility ([c46eb2d](https://github.com/qirolab/nuxt-sanctum-authentication/commit/c46eb2d))
+- Add getAuthUser helper ([85525f7](https://github.com/qirolab/nuxt-sanctum-authentication/commit/85525f7))
+- Add configurable token response key and logging ([3d650bf](https://github.com/qirolab/nuxt-sanctum-authentication/commit/3d650bf))
+- Add responseKey option to SanctumModule ([40d6115](https://github.com/qirolab/nuxt-sanctum-authentication/commit/40d6115))
+- Add userResponseWrapperKey to ModuleOptions ([4821f23](https://github.com/qirolab/nuxt-sanctum-authentication/commit/4821f23))
+- Add fetchService and logger to getAuthUser ([ccfbceb](https://github.com/qirolab/nuxt-sanctum-authentication/commit/ccfbceb))
+- Use getAuthUser to fetch user data ([fdbf3a5](https://github.com/qirolab/nuxt-sanctum-authentication/commit/fdbf3a5))
+- Add HasApiTokens trait to user model ([15afb7c](https://github.com/qirolab/nuxt-sanctum-authentication/commit/15afb7c))
+- Add token authentication ([15e51c2](https://github.com/qirolab/nuxt-sanctum-authentication/commit/15e51c2))
+- Add token authentication routes ([e2f55da](https://github.com/qirolab/nuxt-sanctum-authentication/commit/e2f55da))
+
+### 🩹 Fixes
+
+- Allow null token value ([9783aaf](https://github.com/qirolab/nuxt-sanctum-authentication/commit/9783aaf))
+- Use getAuthUser function to fetch user ([2016d7e](https://github.com/qirolab/nuxt-sanctum-authentication/commit/2016d7e))
+- Update sanctum endpoints ([187fd3f](https://github.com/qirolab/nuxt-sanctum-authentication/commit/187fd3f))
+
+### 🎨 Styles
+
+- Set $wrap to 'data' in UserResource ([1793c98](https://github.com/qirolab/nuxt-sanctum-authentication/commit/1793c98))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.11
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.10...v0.1.11)
