@@ -124,10 +124,13 @@ const processRequestAuth = async (
 ): Promise<void> => {
   const method = context.options.method?.toLowerCase() ?? 'get';
 
-  context.options.headers = {
+  // Ensure headers are of type Headers
+  context.options.headers = new Headers({
     Accept: 'application/json',
-    ...context.options.headers,
-  };
+    ...(context.options.headers instanceof Headers
+      ? Object.fromEntries(context.options.headers.entries())
+      : context.options.headers),
+  });
 
   if (context.options.body instanceof FormData) {
     context.options.method = 'POST';
@@ -138,22 +141,29 @@ const processRequestAuth = async (
     const SECURE_METHODS = new Set(['post', 'delete', 'put', 'patch']);
 
     if (import.meta.server) {
-      context.options.headers = generateServerHeaders(
-        context.options.headers,
-        config,
+      context.options.headers = new Headers(
+        generateServerHeaders(
+          Object.fromEntries(context.options.headers.entries()),
+          config,
+        ),
       );
     }
+
     if (SECURE_METHODS.has(method)) {
-      context.options.headers = await attachCsrfHeader(
-        context.options.headers,
-        config,
-        logger,
+      context.options.headers = new Headers(
+        await attachCsrfHeader(
+          Object.fromEntries(context.options.headers.entries()),
+          config,
+          logger,
+        ),
       );
     }
   } else if (config.authMode === 'token') {
-    context.options.headers = await retrieveAndAttachToken(
-      context.options.headers || {},
-      logger,
+    context.options.headers = new Headers(
+      await retrieveAndAttachToken(
+        Object.fromEntries(context.options.headers.entries()),
+        logger,
+      ),
     );
   }
 };
@@ -187,8 +197,15 @@ export default function createFetchService(
     retry: false,
 
     onRequest: async (context: FetchContext): Promise<void> => {
+      // Handle options.onRequest as MaybeArray
       if (options.onRequest) {
-        await options.onRequest(context);
+        if (Array.isArray(options.onRequest)) {
+          for (const hook of options.onRequest) {
+            await hook(context);
+          }
+        } else {
+          await options.onRequest(context);
+        }
       }
 
       await processRequestAuth(context, config, logger);
@@ -204,8 +221,15 @@ export default function createFetchService(
         }
       }
 
+      // Handle options.onResponseError as MaybeArray
       if (options.onResponseError) {
-        options.onResponseError(context);
+        if (Array.isArray(options.onResponseError)) {
+          for (const hook of options.onResponseError) {
+            await hook(context);
+          }
+        } else {
+          await options.onResponseError(context);
+        }
       }
     },
   };
