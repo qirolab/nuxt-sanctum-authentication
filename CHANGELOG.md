@@ -4,6 +4,30 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.14
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.13...v0.1.14)
+
+### 🚀 Enhancements
+
+- Add provider option to ModuleOptions ([ce5198e](https://github.com/qirolab/nuxt-sanctum-authentication/commit/ce5198e))
+- Add client options to useSanctum login ([48ddc12](https://github.com/qirolab/nuxt-sanctum-authentication/commit/48ddc12))
+- Improve type safety in `useSanctumFetch` ([5ca2ade](https://github.com/qirolab/nuxt-sanctum-authentication/commit/5ca2ade))
+
+### 🩹 Fixes
+
+- Handle MaybeArray for onRequest and onResponseError hooks ([6f174a6](https://github.com/qirolab/nuxt-sanctum-authentication/commit/6f174a6))
+- Make submit options optional in SanctumForm ([57c6066](https://github.com/qirolab/nuxt-sanctum-authentication/commit/57c6066))
+- Ensure `options` defaults to FetchOptions type ([29a4b3f](https://github.com/qirolab/nuxt-sanctum-authentication/commit/29a4b3f))
+
+### 📖 Documentation
+
+- Add link to nuxt-sanctum-authentication module ([adfeb90](https://github.com/qirolab/nuxt-sanctum-authentication/commit/adfeb90))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.13
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.12...v0.1.13)
