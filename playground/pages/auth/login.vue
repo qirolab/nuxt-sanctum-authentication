@@ -12,6 +12,14 @@ const { login } = useSanctum();
 
 async function submit() {
   await login(form.value);
+
+  // // In Case of 2FA feature.
+  // await login<{ two_factor: boolean }>(form.value, {}, async (response) => {
+  //   if (response.two_factor) {
+  //     return await navigateTo(`/2fa`);
+  //   }
+  //   return await navigateTo(`/dashboard`);
+  // });
 }
 </script>
 
