@@ -26,10 +26,10 @@ export const useSanctum = <T>() => {
     }
   }
 
-  async function login(
+  async function login<LoginApiResponse>(
     credentials: Record<string, any>,
     clientOptions: FetchOptions = {},
-    callback?: (user: T | null) => any,
+    callback?: (responseData: LoginApiResponse, user: T | null) => any,
   ) {
     const { redirect, authMode, sanctumEndpoints } = options;
     const currentRoute = useRoute();
@@ -46,18 +46,15 @@ export const useSanctum = <T>() => {
       return await navigateTo(redirect.redirectToAfterLogin);
     }
 
-    type ResponseType<T extends string> = T extends `${infer Key}.${infer Rest}`
-      ? Record<Key, ResponseType<Rest>>
-      : Record<T, string>;
-
-    // Define `fetchResponse` type based on configurable response key, e.g., "data.token"
-    const fetchResponse = await useSanctumFetch<
-      ResponseType<typeof options.token.responseKey>
-    >(sanctumEndpoints.login, {
-      method: 'post',
-      body: credentials,
-      ...(clientOptions as object),
-    });
+    // Define `fetchResponse` as LoginApiResponse
+    const fetchResponse = await useSanctumFetch<LoginApiResponse>(
+      sanctumEndpoints.login,
+      {
+        method: 'post',
+        body: credentials,
+        ...(clientOptions as object),
+      },
+    );
 
     // Handle token or cookie auth
     if (authMode === 'token') {
@@ -73,7 +70,7 @@ export const useSanctum = <T>() => {
     await refreshUser();
 
     if (callback) {
-      return callback(user.value);
+      return callback(fetchResponse, user.value);
     }
 
     // Handle intended redirect
