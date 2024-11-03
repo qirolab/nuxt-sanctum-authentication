@@ -4,6 +4,19 @@ All notable changes to the "spec-coder" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## v0.1.15
+
+[compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.14...v0.1.15)
+
+### 🚀 Enhancements
+
+- Add generic login response type ([1235bda](https://github.com/qirolab/nuxt-sanctum-authentication/commit/1235bda))
+- Add example code for login callback ([9abfa83](https://github.com/qirolab/nuxt-sanctum-authentication/commit/9abfa83))
+
+### ❤️ Contributors
+
+- Harish Kumar <harish.pra22@gmail.com>
+
 ## v0.1.14
 
 [compare changes](https://github.com/qirolab/nuxt-sanctum-authentication/compare/v0.1.13...v0.1.14)
