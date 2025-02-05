@@ -5,6 +5,8 @@ import type { ModuleOptions } from '../types/ModuleOptions';
 import { useTokenStorage } from '../composables/useTokenStorage';
 import { useCurrentUser } from '../composables/useCurrentUser';
 import { useCookie, useNuxtApp, useRequestHeaders, useRequestURL } from '#app';
+import { useSanctumAppConfig } from '../composables/useSanctumAppConfig';
+import { SanctumAppConfig, SanctumInterceptor } from '../types';
 
 /**
  * Fetch and initialize the CSRF cookie required for making secure requests.
@@ -177,6 +179,26 @@ const getCredentialsMode = (): RequestCredentials | undefined => {
   return 'credentials' in Request.prototype ? 'include' : undefined;
 };
 
+function useClientInterceptors(
+  options: ModuleOptions,
+  appConfig: SanctumAppConfig
+): [SanctumInterceptor[], SanctumInterceptor[]] {
+  const [request, response] = [
+    [] as SanctumInterceptor[],
+    [] as SanctumInterceptor[],
+  ];
+
+  if (appConfig.interceptors?.onRequest) {
+    request.push(appConfig.interceptors.onRequest);
+  }
+
+  if (appConfig.interceptors?.onResponse) {
+    response.push(appConfig.interceptors.onResponse);
+  }
+
+  return [request, response];
+}
+
 /**
  * Create and configure a new fetch service instance with the Sanctum module's settings.
  *
@@ -189,6 +211,13 @@ export default function createFetchService(
   logger: ConsolaInstance,
 ): $Fetch {
   const config = useSanctumOptions();
+  const nuxtApp = useNuxtApp();
+  const appConfig = useSanctumAppConfig();
+
+  const [requestInterceptors, responseInterceptors] = useClientInterceptors(
+    options,
+    appConfig
+  );
 
   const httpOptions: FetchOptions = {
     baseURL: config.apiUrl,
@@ -197,6 +226,12 @@ export default function createFetchService(
     retry: false,
 
     onRequest: async (context: FetchContext): Promise<void> => {
+      for (const interceptor of requestInterceptors) {
+        await nuxtApp.runWithContext(async () => {
+          await interceptor(nuxtApp, context, logger);
+        });
+      }
+
       // Handle options.onRequest as MaybeArray
       if (options.onRequest) {
         if (Array.isArray(options.onRequest)) {
@@ -209,6 +244,14 @@ export default function createFetchService(
       }
 
       await processRequestAuth(context, config, logger);
+    },
+
+    onResponse: async (context: FetchContext): Promise<void> => {
+      for (const interceptor of responseInterceptors) {
+        await nuxtApp.runWithContext(async () => {
+          await interceptor(nuxtApp, context, logger);
+        });
+      }
     },
 
     onResponseError: async (context): Promise<void> => {
