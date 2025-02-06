@@ -10,6 +10,7 @@ import defu from 'defu';
 import { MODULE_CONFIG_KEY, MODULE_NAME } from './runtime/helpers/module-info';
 import type { ModuleOptions } from './runtime/types/ModuleOptions';
 import type { DeepPartial } from './runtime/types';
+import { registerTypeTemplates } from './templates';
 
 export default defineNuxtModule<DeepPartial<ModuleOptions>>({
   meta: {
@@ -82,5 +83,6 @@ export default defineNuxtModule<DeepPartial<ModuleOptions>>({
       name: sanctumOptions.middlewareNames.guest,
       path: resolver.resolve('./runtime/middleware/guest'),
     });
+    registerTypeTemplates(resolver);
   },
 });

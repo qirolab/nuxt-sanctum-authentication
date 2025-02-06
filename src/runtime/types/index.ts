@@ -14,7 +14,7 @@ export type RequestMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
 export type SanctumInterceptor = (
   app: NuxtApp,
   ctx: FetchContext,
-  logger: ConsolaInstance
+  logger: ConsolaInstance,
 ) => Promise<void>;
 
 /**
