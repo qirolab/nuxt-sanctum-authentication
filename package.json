@@ -39,15 +39,15 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
-    "dev": "nuxi dev playground",
-    "dev:build": "nuxi build playground",
+    "dev": "nuxi prepare && nuxi dev playground",
+    "dev:build": "nuxi prepare && nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish --access public && git push --follow-tags",
     "lint": "eslint . --ignore-pattern 'test/fixtures/laravel-api/*'",
     "lint:fix": "eslint . --fix --ignore-pattern 'test/fixtures/laravel-api/*'",
     "format": "prettier --write .",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
+    "test": "nuxi prepare && vitest run",
+    "test:watch": "nuxi prepare && vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
