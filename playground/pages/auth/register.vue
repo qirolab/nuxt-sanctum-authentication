@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useApiFetch } from '../../composables/useApiFetch';
+
 definePageMeta({
   middleware: ['$guest'],
 });
@@ -14,7 +16,11 @@ const form = ref({
 
 async function submit() {
   try {
-    await useSanctumFetch('/register', {
+    // await useSanctumFetch('/register', {
+    //   method: 'post',
+    //   body: form.value,
+    // });
+    await useApiFetch('/register', {
       method: 'post',
       body: form.value,
     });
